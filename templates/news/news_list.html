@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>⚽ Football News</h1>
+
+{% for item in news %}
+
+
+<div style="border:1px solid #ccc; margin:10px; padding:10px;">
+{% if item.image %}
+    <img src="{{ item.image.url }}"
+         style="width:300px; height:auto;">
+{% endif %}
+    <h2>{{ item.title }}</h2>
+
+    <p>{{ item.content|truncatechars:200 }}</p>
+
+    <small>
+        By {{ item.author }} | {{ item.created_at }}
+    </small>
+<a href="{% url 'news_detail' item.pk %}">
+    Read more
+</a>
+</div>
+
+{% empty %}
+
+<p>No news yet</p>
+
+{% endfor %}
+
+{% endblock %}

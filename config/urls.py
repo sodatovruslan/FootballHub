@@ -31,6 +31,7 @@ urlpatterns = [
         '',
         include('football.urls') ),
     path('', include('core.urls')),
+    path('standings/', include('stats.urls')),
 ]
 
 if settings.DEBUG:

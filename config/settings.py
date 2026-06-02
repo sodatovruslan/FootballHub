@@ -34,7 +34,7 @@ INSTALLED_APPS = [
 		'accounts',
     'football',
     'news',
-    'statistics',
+    'stats',
     'core',
     'django.contrib.admin',
     'django.contrib.auth',

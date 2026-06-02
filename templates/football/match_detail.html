@@ -2,8 +2,45 @@
 
 {% block content %}
 
+
+
+
 <h1>Match Detail</h1>
 
+
+<h1>⚽ Match</h1>
+
+<h2>
+    {{ match.home_team }} {{ match.home_score }}
+    - 
+    {{ match.away_score }} {{ match.away_team }}
+</h2>
+
+<p>{{ match.date }}</p>
+
+<hr>
+
+{% if is_live %}
+
+    <h3>🔥 LIVE / HIGHLIGHTS</h3>
+
+    {% if match.video_url %}
+
+        <iframe width="700" height="400"
+                src="{{ match.video_url }}"
+                frameborder="0"
+                allowfullscreen>
+        </iframe>
+
+    {% else %}
+        <p>No video yet</p>
+    {% endif %}
+
+{% else %}
+
+    <p>⏳ Match not started yet (kickoff at {{ match.date }})</p>
+
+{% endif %}
 <h2>
     {{ match.home_team }} {{ match.home_score }} : {{ match.away_score }} {{ match.away_team }}
 </h2>

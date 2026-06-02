@@ -43,13 +43,14 @@ class Match(models.Model):
     date = models.DateTimeField()
     home_score = models.PositiveIntegerField(default=0)
     away_score = models.PositiveIntegerField(default=0)
+    video_url = models.URLField(blank=True, null=True)
     def __str__(self):
         return f"{self.home_team} vs {self.away_team}"
     
 
 
 class Standing(models.Model):
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE,related_name='football_standings')
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
     played = models.PositiveIntegerField(default=0)
     wins = models.PositiveIntegerField(default=0)

@@ -4,6 +4,7 @@ from .models import Match
 from .models import Standing
 from django.urls import reverse_lazy
 from django.views import generic
+from django.utils import timezone
 
 
 def home_redirect(request):
@@ -40,9 +41,19 @@ def match_list(request):
     return render(request, 'football/match_list.html', {'matches': matches})
 
 
+
+
 def match_detail(request, pk):
     match = get_object_or_404(Match, pk=pk)
-    return render(request, 'football/match_detail.html', {'match': match})
+
+    now = timezone.now()
+
+    is_live = match.date <= now
+
+    return render(request, 'football/match_detail.html', {
+        'match': match,
+        'is_live': is_live
+    })
 
 
 
