@@ -1,9 +1,13 @@
-from django.shortcuts import render,get_object_or_404
+from django.shortcuts import render,get_object_or_404,redirect
 from .models import Team,Player,Tournament
 from .models import Match
 from .models import Standing
 from django.urls import reverse_lazy
 from django.views import generic
+
+
+def home_redirect(request):
+    return redirect('team_list')
 
 def team_list(request):
     teams = Team.objects.all()

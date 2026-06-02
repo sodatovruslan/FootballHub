@@ -120,9 +120,64 @@ def login_view(request):
     )
 
 
+def forgot_password(request):
+    form = ForgotPasswordForm()
+
+    if request.method == 'POST':
+        form = ForgotPasswordForm(request.POST)
+
+        if form.is_valid():
+            email = form.cleaned_data['email']
+
+            user = User.objects.filter(email=email).first()
+
+            if not user:
+                return render(request, 'accounts/forgot_password.html', {
+                    'form': form,
+                    'error': 'Email not found'
+                })
+
+            send_confirmation_email(user)
+
+            return redirect('reset_confirm')
+
+    return render(request, 'accounts/forgot_password.html', {
+        'form': form
+    })
+
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+def reset_confirm(request):
+    form = ResetConfirmForm()
+
+    if request.method == 'POST':
+        form = ResetConfirmForm(request.POST)
+
+        if form.is_valid():
+            code = form.cleaned_data['code']
+            new_password = form.cleaned_data['new_password']
+
+            confirm = EmailConfirm.objects.filter(code=code).first()
+
+            if not confirm:
+                return render(request, 'accounts/reset_confirm.html', {
+                    'form': form,
+                    'error': 'Wrong code'
+                })
+
+            user = confirm.user
+            user.set_password(new_password)
+            user.save()
+
+            confirm.delete()
+
+            return redirect('login')
+
+    return render(request, 'accounts/reset_confirm.html', {
+        'form': form
+    })
 
 
 def confirm_email(request):

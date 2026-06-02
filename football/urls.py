@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+	path('', views.home_redirect, name='home_redirect'),
     path('teams/', views.team_list, name='team_list'),
     path('team/<int:pk>/', views.team_detail, name='team_detail'),
 	path('players/', views.player_list, name='player_list'),

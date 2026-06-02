@@ -30,6 +30,7 @@ urlpatterns = [
     path(
         '',
         include('football.urls') ),
+    path('', include('core.urls')),
 ]
 
 if settings.DEBUG:
