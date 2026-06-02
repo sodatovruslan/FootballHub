@@ -41,7 +41,68 @@ def match_detail(request, pk):
 
 
 
+# def standings(request):
+#     table = Standing.objects.select_related('team', 'tournament').order_by('-points')
+#     return render(request, 'football/standings.html', {'table': table})
+
+from django.db.models import Q
+from .models import Team, Match
+
+
 def standings(request):
-    table = Standing.objects.select_related('team', 'tournament').order_by('-points')
+    teams = Team.objects.all()
+
+    table = []
+
+    for team in teams:
+        matches = Match.objects.filter(
+            Q(home_team=team) | Q(away_team=team)
+        )
+
+        played = matches.count()
+        wins = 0
+        draws = 0
+        losses = 0
+        goals_for = 0
+        goals_against = 0
+
+        for match in matches:
+            if match.home_team == team:
+                goals_for += match.home_score
+                goals_against += match.away_score
+
+                if match.home_score > match.away_score:
+                    wins += 1
+                elif match.home_score == match.away_score:
+                    draws += 1
+                else:
+                    losses += 1
+
+            else:
+                goals_for += match.away_score
+                goals_against += match.home_score
+
+                if match.away_score > match.home_score:
+                    wins += 1
+                elif match.away_score == match.home_score:
+                    draws += 1
+                else:
+                    losses += 1
+
+        points = wins * 3 + draws
+
+        table.append({
+            'team': team,
+            'played': played,
+            'wins': wins,
+            'draws': draws,
+            'losses': losses,
+            'goals_for': goals_for,
+            'goals_against': goals_against,
+            'points': points
+        })
+
+    table = sorted(table, key=lambda x: x['points'], reverse=True)
+
     return render(request, 'football/standings.html', {'table': table})
 # Create your views here.
