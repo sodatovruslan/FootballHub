@@ -200,4 +200,49 @@ class TournamentDeleteView(generic.DeleteView):
     model = Tournament
     template_name = 'football/tournament_delete.html'
     success_url = reverse_lazy('tournament_list')
+    
+
+class MatchCreateView(generic.CreateView):
+    model = Match
+    fields = [
+        'tournament',
+        'home_team',
+        'away_team',
+        'date',
+        'home_score',
+        'away_score'
+    ]
+    template_name = 'football/match_create.html'
+    success_url = reverse_lazy('match_list')
+
+
+class MatchUpdateView(generic.UpdateView):
+    model = Match
+    fields = [
+        'tournament',
+        'home_team',
+        'away_team',
+        'date',
+        'home_score',
+        'away_score'
+    ]
+    template_name = 'football/match_update.html'
+    success_url = reverse_lazy('match_list')
+    
+
+class MatchDeleteView(generic.DeleteView):
+    model = Match
+    template_name = 'football/match_delete.html'
+    success_url = reverse_lazy('match_list')
+    
+
+class MatchListView(generic.ListView):
+    model = Match
+    template_name = 'football/match_list.html'
+    context_object_name = 'matches'
+    
+class MatchDetailView(generic.DetailView):
+    model = Match
+    template_name = 'football/match_detail.html'
+    context_object_name = 'match'
 # Create your views here.

@@ -11,4 +11,15 @@
 <p>Tournament: {{ match.tournament.name }}</p>
 <p>Date: {{ match.date }}</p>
 
+
+<a href="{% url 'match_update' match.pk %}"
+   class="btn btn-warning">
+    Update
+</a>
+
+<a href="{% url 'match_delete' match.pk %}"
+   class="btn btn-danger">
+    Delete
+</a>
+
 {% endblock content %}
