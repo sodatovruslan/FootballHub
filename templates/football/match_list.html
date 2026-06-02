@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Matches</h1>
+
+{% for match in matches %}
+    <p>
+        <a href="/match/{{ match.pk }}/">
+            {{ match.home_team }} {{ match.home_score }} : {{ match.away_score }} {{ match.away_team }}
+        </a>
+        ({{ match.tournament.name }})
+    </p>
+{% endfor %}
+
+{% endblock content %}

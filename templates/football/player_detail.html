@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>{{ player.full_name }}</h1>
+
+<p>Team: {{ player.team.name }}</p>
+<p>Age: {{ player.age }}</p>
+<p>Number: {{ player.number }}</p>
+<p>Position: {{ player.position }}</p>
+
+{% endblock content %}
