@@ -13,4 +13,12 @@ urlpatterns = [
 	path('team/create/',views.TeamCreateView.as_view(),name='team_create'),
     path('team/update/<int:pk>/',views.TeamUpdateView.as_view(),name='team_update'),
     path('team/delete/<int:pk>/',views.TeamDeleteView.as_view(),name='team_delete'),
+	path('player/create/',views.PlayerCreateView.as_view(),name='player_create'),
+    path('player/update/<int:pk>/',views.PlayerUpdateView.as_view(),name='player_update'),
+    path('player/delete/<int:pk>/',views.PlayerDeleteView.as_view(),name='player_delete'),
+    path('tournaments/',views.TournamentListView.as_view(),name='tournament_list'),
+    path('tournament/<int:pk>/',views.TournamentDetailView.as_view(),name='tournament_detail'),
+    path('tournament/create/',views.TournamentCreateView.as_view(),   name='tournament_create'),
+    path('tournament/update/<int:pk>/',views.TournamentUpdateView.as_view(),name='tournament_update'),
+    path('tournament/delete/<int:pk>/',views.TournamentDeleteView.as_view(),name='tournament_delete'),
 ]

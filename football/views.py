@@ -1,5 +1,5 @@
 from django.shortcuts import render,get_object_or_404
-from .models import Team,Player
+from .models import Team,Player,Tournament
 from .models import Match
 from .models import Standing
 from django.urls import reverse_lazy
@@ -159,4 +159,45 @@ class PlayerCreateView(generic.CreateView):
     fields = ['team','full_name','age','number','position','photo']
     template_name = 'football/player_create.html'
     success_url = reverse_lazy('player_list')
+    
+class PlayerUpdateView(generic.UpdateView):
+    model = Player
+    fields = ['team','full_name','age','number','position','photo']
+    template_name = 'football/player_update.html'
+    success_url = reverse_lazy('player_list')
+
+
+class PlayerDeleteView(generic.DeleteView):
+    model = Player
+    template_name = 'football/player_delete.html'
+    success_url = reverse_lazy('player_list')
+    
+
+class TournamentListView(generic.ListView):
+    model = Tournament
+    template_name = 'football/tournament_list.html'
+    context_object_name = 'tournaments'
+    
+class TournamentDetailView(generic.DetailView):
+    model = Tournament
+    template_name = 'football/tournament_detail.html'
+    context_object_name = 'tournament'
+    
+class TournamentCreateView(generic.CreateView):
+    model = Tournament
+    fields = ['name', 'season']
+    template_name = 'football/tournament_create.html'
+    success_url = reverse_lazy('tournament_list')
+    
+class TournamentUpdateView(generic.UpdateView):
+    model = Tournament
+    fields = ['name', 'season']
+    template_name = 'football/tournament_update.html'
+    success_url = reverse_lazy('tournament_list')
+    
+
+class TournamentDeleteView(generic.DeleteView):
+    model = Tournament
+    template_name = 'football/tournament_delete.html'
+    success_url = reverse_lazy('tournament_list')
 # Create your views here.

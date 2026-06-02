@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>{{ tournament.name }}</h1>
+
+<p>Season: {{ tournament.season }}</p>
+
+<a href="{% url 'tournament_update' tournament.pk %}"
+   class="btn btn-warning">
+    Update
+</a>
+
+<a href="{% url 'tournament_delete' tournament.pk %}"
+   class="btn btn-danger">
+    Delete
+</a>
+
+{% endblock %}

@@ -10,11 +10,11 @@
 <p>Position: {{ player.position }}</p>
 
 
-<a href="{% url 'team_update' team.pk %}" class="btn btn-warning">
+<a href="{% url 'player_update' player.pk %}" class="btn btn-warning">
     Update
 </a>
 
-<a href="{% url 'team_delete' team.pk %}" class="btn btn-danger">
+<a href="{% url 'player_delete' player.pk %}" class="btn btn-danger">
     Delete
 </a>
 

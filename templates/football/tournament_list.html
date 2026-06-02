@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Tournaments</h1>
+
+<a href="{% url 'tournament_create' %}" class="btn btn-success mb-3">
+    Create Tournament
+</a>
+
+{% for tournament in tournaments %}
+    <p>
+        <a href="{% url 'tournament_detail' tournament.pk %}">
+            {{ tournament.name }}
+        </a>
+        ({{ tournament.season }})
+    </p>
+{% endfor %}
+
+{% endblock %}
