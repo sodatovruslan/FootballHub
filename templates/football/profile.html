@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Profile</h1>
+
+{% if profile.avatar %}
+    <img src="{{ profile.avatar.url }}"
+         width="200">
+{% endif %}
+
+<p>
+    <strong>Username:</strong>
+    {{ request.user.username }}
+</p>
+
+<p>
+    <strong>Email:</strong>
+    {{ request.user.email }}
+</p>
+
+<p>
+    <strong>Bio:</strong>
+    {{ profile.bio }}
+</p>
+
+<p>
+    <strong>Created:</strong>
+    {{ profile.created_at }}
+</p>
+<a href="{% url 'profile_update' %}"
+   class="btn btn-warning">
+    Edit Profile
+</a>
+
+{% endblock %}

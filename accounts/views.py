@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.mail import send_mail
 from django.conf import settings
 from random import randint
+from django.contrib.auth.decorators import login_required
 
 from .models import EmailConfirm,Profile
 from .forms import (
@@ -157,4 +158,36 @@ def confirm_email(request):
         confirm.delete()
         return redirect('login')
     return render(request,'accounts/confirm_email.html',{'form': form})
+
+
+
+@login_required
+def profile(request):
+    return render(request,'accounts/profile.html',{'profile': request.user.profile})
+
+from .forms import ProfileForm
+
+
+@login_required
+def profile_update(request):
+
+    profile = request.user.profile
+
+    form = ProfileForm(
+        request.POST or None,
+        request.FILES or None,
+        instance=profile
+    )
+
+    if form.is_valid():
+        form.save()
+        return redirect('profile')
+
+    return render(
+        request,
+        'accounts/profile_update.html',
+        {
+            'form': form
+        }
+    )
 # Create your views here.
