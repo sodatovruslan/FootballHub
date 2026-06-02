@@ -152,4 +152,11 @@ class TeamDeleteView(generic.DeleteView):
     model = Team
     template_name = 'football/team_delete.html'
     success_url = reverse_lazy('team_list')
+    
+
+class PlayerCreateView(generic.CreateView):
+    model = Player
+    fields = ['team','full_name','age','number','position','photo']
+    template_name = 'football/player_create.html'
+    success_url = reverse_lazy('player_list')
 # Create your views here.
