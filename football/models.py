@@ -35,4 +35,15 @@ class Tournament(models.Model):
 
     def __str__(self):
         return self.name
+    
+class Match(models.Model):
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    home_team = models.ForeignKey(Team,on_delete=models.CASCADE,related_name='home_matches')
+    away_team = models.ForeignKey(Team,on_delete=models.CASCADE,related_name='away_matches')
+    date = models.DateTimeField()
+    home_score = models.PositiveIntegerField(default=0)
+    away_score = models.PositiveIntegerField(default=0)
+    def __str__(self):
+        return f"{self.home_team} vs {self.away_team}"
 # Create your models here.
+
