@@ -1,6 +1,8 @@
 from django.shortcuts import render,get_object_or_404
 from .models import Team,Player
 from .models import Match
+from .models import Standing
+
 
 def team_list(request):
     teams = Team.objects.all()
@@ -36,4 +38,10 @@ def match_list(request):
 def match_detail(request, pk):
     match = get_object_or_404(Match, pk=pk)
     return render(request, 'football/match_detail.html', {'match': match})
+
+
+
+def standings(request):
+    table = Standing.objects.select_related('team', 'tournament').order_by('-points')
+    return render(request, 'football/standings.html', {'table': table})
 # Create your views here.
