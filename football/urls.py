@@ -10,4 +10,7 @@ urlpatterns = [
     path('match/<int:pk>/', views.match_detail, name='match_detail'),
 	path('standings/', views.standings, name='standings'),
 	path('top-scorers/', views.top_scorers, name='top_scorers'),
+	path('team/create/',views.TeamCreateView.as_view(),name='team_create'),
+    path('team/update/<int:pk>/',views.TeamUpdateView.as_view(),name='team_update'),
+    path('team/delete/<int:pk>/',views.TeamDeleteView.as_view(),name='team_delete'),
 ]

@@ -9,4 +9,13 @@
 <p>Number: {{ player.number }}</p>
 <p>Position: {{ player.position }}</p>
 
+
+<a href="{% url 'team_update' team.pk %}" class="btn btn-warning">
+    Update
+</a>
+
+<a href="{% url 'team_delete' team.pk %}" class="btn btn-danger">
+    Delete
+</a>
+
 {% endblock content %}

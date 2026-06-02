@@ -2,7 +2,8 @@ from django.shortcuts import render,get_object_or_404
 from .models import Team,Player
 from .models import Match
 from .models import Standing
-
+from django.urls import reverse_lazy
+from django.views import generic
 
 def team_list(request):
     teams = Team.objects.all()
@@ -131,4 +132,24 @@ def top_scorers(request):
     scorers = sorted(scorers, key=lambda x: x['goals'], reverse=True)
 
     return render(request, 'football/top_scorers.html', {'scorers': scorers})
+
+
+
+
+class TeamCreateView(generic.CreateView):
+    model = Team
+    fields = ['name', 'city', 'logo']
+    template_name = 'football/team_create.html'
+    success_url = reverse_lazy('team_list')
+class TeamUpdateView(generic.UpdateView):
+    model = Team
+    fields = ['name', 'city', 'logo']
+    template_name = 'football/team_update.html'
+    success_url = reverse_lazy('team_list')
+    
+
+class TeamDeleteView(generic.DeleteView):
+    model = Team
+    template_name = 'football/team_delete.html'
+    success_url = reverse_lazy('team_list')
 # Create your views here.

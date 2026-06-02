@@ -1,11 +1,7 @@
 {% extends 'base.html' %}
-
 {% block content %}
-
 <h1>Top Scorers</h1>
-
 <table class="table table-striped">
-
     <thead>
         <tr>
             <th>Player</th>
@@ -13,7 +9,6 @@
             <th>Goals</th>
         </tr>
     </thead>
-
     <tbody>
         {% for item in scorers %}
         <tr>
@@ -23,7 +18,5 @@
         </tr>
         {% endfor %}
     </tbody>
-
 </table>
-
 {% endblock content %}
