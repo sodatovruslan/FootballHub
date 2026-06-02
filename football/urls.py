@@ -9,4 +9,5 @@ urlpatterns = [
 	path('matches/', views.match_list, name='match_list'),
     path('match/<int:pk>/', views.match_detail, name='match_detail'),
 	path('standings/', views.standings, name='standings'),
+	path('top-scorers/', views.top_scorers, name='top_scorers'),
 ]

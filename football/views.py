@@ -105,4 +105,30 @@ def standings(request):
     table = sorted(table, key=lambda x: x['points'], reverse=True)
 
     return render(request, 'football/standings.html', {'table': table})
+
+
+
+def top_scorers(request):
+    players = Player.objects.all()
+
+    scorers = []
+
+    for player in players:
+        goals = 0
+
+        matches = Match.objects.filter(
+            home_team=player.team
+        ) | Match.objects.filter(
+            away_team=player.team
+        )
+
+      
+        scorers.append({
+            'player': player,
+            'goals': goals
+        })
+
+    scorers = sorted(scorers, key=lambda x: x['goals'], reverse=True)
+
+    return render(request, 'football/top_scorers.html', {'scorers': scorers})
 # Create your views here.
