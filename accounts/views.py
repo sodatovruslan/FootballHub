@@ -56,17 +56,22 @@ def register(request):
         user.is_active = False
         user.save()
 
-        Profile.objects.create(
-            user=user,
-            full_name=username
+        Profile.objects.get_or_create(
+            user=user
         )
 
         send_confirmation_email(user)
 
+        # Получаем код для отображения на странице
+        confirm = EmailConfirm.objects.filter(user=user).first()
+
         return render(
             request,
             'accounts/confirm_email.html',
-            {'username': user.username}
+            {
+                'username': user.username,
+                'confirmation_code': confirm.code if confirm else None
+            }
         )
 
     return render(

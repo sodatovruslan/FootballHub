@@ -5,6 +5,8 @@ class Team(models.Model):
     name = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     logo = models.ImageField(upload_to='teams/', blank=True, null=True)
+    stadium = models.CharField(max_length=100, blank=True, null=True)
+    capacity = models.PositiveIntegerField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -52,6 +54,13 @@ class Match(models.Model):
     home_score = models.PositiveIntegerField(default=0)
     away_score = models.PositiveIntegerField(default=0)
     stream_url = models.URLField(blank=True, null=True)
+    is_live = models.BooleanField(default=False)
+    man_of_the_match = models.ForeignKey(
+    Player,
+    on_delete=models.SET_NULL,
+    null=True,
+    blank=True
+)
     def __str__(self):
         return f"{self.home_team} vs {self.away_team}"
     
@@ -108,5 +117,35 @@ class LineupPlayer(models.Model):
 
     def __str__(self):
         return self.player.full_name
+    
+
+
+class MatchEvent(models.Model):
+    EVENT_TYPES = [
+        ('GOAL', 'Goal'),
+        ('YELLOW', 'Yellow Card'),
+        ('RED', 'Red Card'),
+        ('SUB', 'Substitution'),
+    ]
+
+    match = models.ForeignKey(
+        Match,
+        on_delete=models.CASCADE
+    )
+
+    player = models.ForeignKey(
+        Player,
+        on_delete=models.CASCADE
+    )
+
+    minute = models.PositiveIntegerField()
+
+    event_type = models.CharField(
+        max_length=20,
+        choices=EVENT_TYPES
+    )
+
+    def __str__(self):
+        return f"{self.minute}' {self.player.full_name}"
 # Create your models here.
 

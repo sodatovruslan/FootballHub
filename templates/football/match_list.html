@@ -1,16 +1,89 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+    .match-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .match-card:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 40px rgba(0, 212, 255, 0.2);
+        border-color: rgba(0, 212, 255, 0.3);
+    }
+    
+    .match-teams {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+    
+    .match-score {
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .match-tournament {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+    }
+    
+    .match-date {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.85rem;
+    }
+</style>
 
-<h1>Matches</h1>
+<h1 class="mb-4 text-center">⚽ All Matches</h1>
 
-{% for match in matches %}
-    <p>
-        <a href="/match/{{ match.pk }}/">
-            {{ match.home_team }} {{ match.home_score }} : {{ match.away_score }} {{ match.away_team }}
-        </a>
-        ({{ match.tournament.name }})
-    </p>
-{% endfor %}
-
+<div class="row">
+    {% for match in matches %}
+        <div class="col-md-6 col-lg-4">
+            <a href="{% url 'match_detail' match.pk %}" style="text-decoration: none; color: inherit;">
+                <div class="match-card">
+                    {% if match.is_live %}
+                        <span class="live-badge mb-2 d-inline-block">🔴 LIVE</span>
+                    {% endif %}
+                    
+                    <div class="match-tournament mb-2">
+                        {{ match.tournament.name }}
+                    </div>
+                    
+                    <div class="match-teams">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>{{ match.home_team.name }}</span>
+                            <span class="match-score">{{ match.home_score }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>{{ match.away_team.name }}</span>
+                            <span class="match-score">{{ match.away_score }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="match-date mt-3">
+                        📅 {{ match.date|date:"F j, Y, H:i" }}
+                    </div>
+                </div>
+            </a>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="text-center text-muted">
+                <p>No matches available.</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
 {% endblock content %}

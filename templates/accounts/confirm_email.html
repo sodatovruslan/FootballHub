@@ -1,30 +1,70 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+    .code-display {
+        background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(123, 44, 191, 0.2));
+        border: 2px solid rgba(0, 212, 255, 0.5);
+        border-radius: 15px;
+        padding: 20px;
+        margin: 20px 0;
+        text-align: center;
+    }
 
-<h1>Confirm Email</h1>
+    .code-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        letter-spacing: 10px;
+        background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+</style>
 
-{% if error %}
-<div class="alert alert-danger">
-    {{ error }}
+<div class="glass-card">
+    <h1 class="text-center mb-4">Confirm Email</h1>
+
+    {% if confirmation_code %}
+        <div class="code-display">
+            <p class="mb-2">Your confirmation code:</p>
+            <div class="code-number">{{ confirmation_code }}</div>
+            <p class="text-muted mt-2">Copy this code and enter it below</p>
+        </div>
+    {% endif %}
+
+    {% if error %}
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <input
+            type="hidden"
+            name="username"
+            value="{{ username }}"
+        >
+
+        <div class="mb-3">
+            <label for="id_code" class="form-label">Enter confirmation code:</label>
+            <input
+                type="text"
+                name="code"
+                class="form-control"
+                id="id_code"
+                placeholder="Enter 6-digit code"
+                maxlength="6"
+                style="font-size: 1.5rem; letter-spacing: 5px; text-align: center;"
+                required
+            >
+        </div>
+
+        <button type="submit" class="btn btn-primary-gradient w-100">
+            Confirm
+        </button>
+    </form>
 </div>
-{% endif %}
-
-<form method="post">
-    {% csrf_token %}
-
-    <input
-        type="hidden"
-        name="username"
-        value="{{ username }}"
-    >
-
-    {{ form.as_p }}
-
-    <button type="submit" class="btn btn-success">
-        Confirm
-    </button>
-
-</form>
-
 {% endblock %}

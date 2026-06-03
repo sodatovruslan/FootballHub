@@ -1,9 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
+{% if team.logo %}
+    <img src="{{ team.logo.url }}" width="150">
+{% else %}
+    <p>No logo</p>
+{% endif %}
 <h1>{{ team.name }}</h1>
-
+<p>🏟 Stadium: {{ team.stadium }}</p>
+<p>👥 Capacity: {{ team.capacity }}</p>
 <p>City: {{ team.city }}</p>
 
 <h3>Players:</h3>

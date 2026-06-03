@@ -1,14 +1,20 @@
-from django.shortcuts import render,get_object_or_404,redirect
-from .models import Team,Player,Tournament
-from .models import Match
-from .models import Standing
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import generic
 from django.utils import timezone
-from .models import Match, Lineup
+from django.db.models import Q, Count
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
+
+from .models import Team, Player, Tournament, Match, Standing, Lineup, MatchEvent
+from stats.models import MatchStatistic
+
+
+
 
 def home_redirect(request):
     return redirect('team_list')
+
 
 def team_list(request):
     teams = Team.objects.all()
@@ -24,67 +30,25 @@ def player_list(request):
     players = Player.objects.select_related('team')
     return render(request, 'football/player_list.html', {'players': players})
 
+
 def player_detail(request, pk):
     player = get_object_or_404(Player, pk=pk)
-    return render(request, 'football/player_detail.html', {'player': player})
-
-
-
-
-
-def match_list(request):
-    matches = Match.objects.select_related('home_team', 'away_team', 'tournament')
-    return render(request, 'football/match_list.html', {'matches': matches})
-
-
-
-
-
-
-
-
-
-def match_detail(request, pk):
-    match = get_object_or_404(Match, pk=pk)
-
-    is_started = timezone.now() >= match.date
-
-    home_lineup = Lineup.objects.filter(
-        match=match,
-        team=match.home_team
-    ).first()
-
-    away_lineup = Lineup.objects.filter(
-        match=match,
-        team=match.away_team
-    ).first()
+    goals = MatchEvent.objects.filter(
+        player=player,
+        event_type='GOAL'
+    ).count()
 
     context = {
-        'match': match,
-        'is_started': is_started,
-        'home_lineup': home_lineup,
-        'away_lineup': away_lineup,
+        'player': player,
+        'goals': goals,
     }
-
-    return render(
-        request,
-        'football/match_detail.html',
-        context
-    )
+    return render(request, 'football/player_detail.html', context)
 
 
-
-# def standings(request):
-#     table = Standing.objects.select_related('team', 'tournament').order_by('-points')
-#     return render(request, 'football/standings.html', {'table': table})
-
-from django.db.models import Q
-from .models import Team, Match
 
 
 def standings(request):
     teams = Team.objects.all()
-
     table = []
 
     for team in teams:
@@ -110,7 +74,6 @@ def standings(request):
                     draws += 1
                 else:
                     losses += 1
-
             else:
                 goals_for += match.away_score
                 goals_against += match.home_score
@@ -136,105 +99,132 @@ def standings(request):
         })
 
     table = sorted(table, key=lambda x: x['points'], reverse=True)
-
     return render(request, 'football/standings.html', {'table': table})
 
 
-
 def top_scorers(request):
-    players = Player.objects.all()
-
-    scorers = []
-
-    for player in players:
-        goals = 0
-
-        matches = Match.objects.filter(
-            home_team=player.team
-        ) | Match.objects.filter(
-            away_team=player.team
+    scorers = (
+        MatchEvent.objects
+        .filter(event_type='GOAL')
+        .values(
+            'player__full_name',
+            'player__team__name'
         )
-
-      
-        scorers.append({
-            'player': player,
-            'goals': goals
-        })
-
-    scorers = sorted(scorers, key=lambda x: x['goals'], reverse=True)
-
+        .annotate(goals=Count('id'))
+        .order_by('-goals')
+    )
     return render(request, 'football/top_scorers.html', {'scorers': scorers})
 
 
 
-
-class TeamCreateView(generic.CreateView):
+class TeamCreateView(PermissionRequiredMixin, generic.CreateView):
+    permission_required = 'football.add_team'
     model = Team
     fields = ['name', 'city', 'logo']
     template_name = 'football/team_create.html'
     success_url = reverse_lazy('team_list')
-class TeamUpdateView(generic.UpdateView):
+
+
+class TeamUpdateView(PermissionRequiredMixin, generic.UpdateView):
+    permission_required = 'football.change_team'
     model = Team
     fields = ['name', 'city', 'logo']
     template_name = 'football/team_update.html'
     success_url = reverse_lazy('team_list')
-    
 
-class TeamDeleteView(generic.DeleteView):
+
+class TeamDeleteView(PermissionRequiredMixin, generic.DeleteView):
+    permission_required = 'football.delete_team'
     model = Team
     template_name = 'football/team_delete.html'
     success_url = reverse_lazy('team_list')
-    
 
-class PlayerCreateView(generic.CreateView):
+
+# Player Views
+class PlayerCreateView(PermissionRequiredMixin, generic.CreateView):
+    permission_required = 'football.add_player'
     model = Player
-    fields = ['team','full_name','age','number','position','photo']
+    fields = ['team', 'full_name', 'age', 'number', 'position', 'photo']
     template_name = 'football/player_create.html'
     success_url = reverse_lazy('player_list')
-    
-class PlayerUpdateView(generic.UpdateView):
+
+
+class PlayerUpdateView(PermissionRequiredMixin, generic.UpdateView):
+    permission_required = 'football.change_player'
     model = Player
-    fields = ['team','full_name','age','number','position','photo']
+    fields = ['team', 'full_name', 'age', 'number', 'position', 'photo']
     template_name = 'football/player_update.html'
     success_url = reverse_lazy('player_list')
 
 
-class PlayerDeleteView(generic.DeleteView):
+class PlayerDeleteView(PermissionRequiredMixin, generic.DeleteView):
+    permission_required = 'football.delete_player'
     model = Player
     template_name = 'football/player_delete.html'
     success_url = reverse_lazy('player_list')
-    
 
-class TournamentListView(generic.ListView):
+
+# Tournament Views
+class TournamentListView(PermissionRequiredMixin, generic.ListView):
+    permission_required = 'football.add_tournament'
     model = Tournament
     template_name = 'football/tournament_list.html'
     context_object_name = 'tournaments'
-    
+
+
 class TournamentDetailView(generic.DetailView):
     model = Tournament
     template_name = 'football/tournament_detail.html'
     context_object_name = 'tournament'
-    
-class TournamentCreateView(generic.CreateView):
+
+
+class TournamentCreateView(PermissionRequiredMixin, generic.CreateView):
+    permission_required = 'football.add_tournament'
     model = Tournament
     fields = ['name', 'season']
     template_name = 'football/tournament_create.html'
     success_url = reverse_lazy('tournament_list')
-    
-class TournamentUpdateView(generic.UpdateView):
+
+
+class TournamentUpdateView(PermissionRequiredMixin, generic.UpdateView):
+    permission_required = 'football.change_tournament'
     model = Tournament
     fields = ['name', 'season']
     template_name = 'football/tournament_update.html'
     success_url = reverse_lazy('tournament_list')
-    
 
-class TournamentDeleteView(generic.DeleteView):
+
+class TournamentDeleteView(PermissionRequiredMixin, generic.DeleteView):
+    permission_required = 'football.delete_tournament'
     model = Tournament
     template_name = 'football/tournament_delete.html'
     success_url = reverse_lazy('tournament_list')
-    
 
-class MatchCreateView(generic.CreateView):
+
+# Match Views
+class MatchListView(generic.ListView):
+    model = Match
+    template_name = 'football/match_list.html'
+    context_object_name = 'matches'
+
+
+class MatchDetailView(generic.DetailView):
+    model = Match
+    template_name = 'football/match_detail.html'
+    context_object_name = 'match'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        match = self.object
+        context['statistic'] = MatchStatistic.objects.filter(match=match).first()
+        context['is_started'] = timezone.now() >= match.date
+        context['home_lineup'] = Lineup.objects.filter(match=match, team=match.home_team).first()
+        context['away_lineup'] = Lineup.objects.filter(match=match, team=match.away_team).first()
+        return context
+
+
+class MatchCreateView(PermissionRequiredMixin, generic.CreateView):
+    permission_required = 'football.add_match'
     model = Match
     fields = [
         'tournament',
@@ -248,7 +238,8 @@ class MatchCreateView(generic.CreateView):
     success_url = reverse_lazy('match_list')
 
 
-class MatchUpdateView(generic.UpdateView):
+class MatchUpdateView(PermissionRequiredMixin, generic.UpdateView):
+    permission_required = 'football.change_match'
     model = Match
     fields = [
         'tournament',
@@ -260,21 +251,10 @@ class MatchUpdateView(generic.UpdateView):
     ]
     template_name = 'football/match_update.html'
     success_url = reverse_lazy('match_list')
-    
 
-class MatchDeleteView(generic.DeleteView):
+
+class MatchDeleteView(PermissionRequiredMixin, generic.DeleteView):
+    permission_required = 'football.delete_match'
     model = Match
     template_name = 'football/match_delete.html'
     success_url = reverse_lazy('match_list')
-    
-
-class MatchListView(generic.ListView):
-    model = Match
-    template_name = 'football/match_list.html'
-    context_object_name = 'matches'
-    
-class MatchDetailView(generic.DetailView):
-    model = Match
-    template_name = 'football/match_detail.html'
-    context_object_name = 'match'
-# Create your views here.
