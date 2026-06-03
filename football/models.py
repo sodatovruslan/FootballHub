@@ -26,6 +26,14 @@ class Player(models.Model):
     number = models.PositiveIntegerField()
     position = models.CharField(max_length=2, choices=POSITION_CHOICES)
     photo = models.ImageField(upload_to='players/', blank=True, null=True)
+    overall = models.PositiveIntegerField(default=75)
+    pace = models.PositiveIntegerField(default=70)
+    shooting = models.PositiveIntegerField(default=70)
+    passing = models.PositiveIntegerField(default=70)
+    dribbling = models.PositiveIntegerField(default=70)
+    defending = models.PositiveIntegerField(default=70)
+    physical = models.PositiveIntegerField(default=70)
+
 
     def __str__(self):
         return self.full_name
@@ -43,7 +51,7 @@ class Match(models.Model):
     date = models.DateTimeField()
     home_score = models.PositiveIntegerField(default=0)
     away_score = models.PositiveIntegerField(default=0)
-    video_url = models.URLField(blank=True, null=True)
+    stream_url = models.URLField(blank=True, null=True)
     def __str__(self):
         return f"{self.home_team} vs {self.away_team}"
     
@@ -62,5 +70,43 @@ class Standing(models.Model):
 
     def __str__(self):
         return f"{self.team.name} - {self.tournament.name}"
+    
+
+class Lineup(models.Model):
+    match = models.ForeignKey(
+        Match,
+        on_delete=models.CASCADE
+    )
+
+    team = models.ForeignKey(
+        Team,
+        on_delete=models.CASCADE
+    )
+
+    formation = models.CharField(
+        max_length=20
+    )
+
+    def __str__(self):
+        return f"{self.team} - {self.formation}"
+    
+
+class LineupPlayer(models.Model):
+    lineup = models.ForeignKey(
+        Lineup,
+        on_delete=models.CASCADE
+    )
+
+    player = models.ForeignKey(
+        Player,
+        on_delete=models.CASCADE
+    )
+
+    position = models.CharField(
+        max_length=10
+    )
+
+    def __str__(self):
+        return self.player.full_name
 # Create your models here.
 

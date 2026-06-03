@@ -46,14 +46,16 @@ def match_list(request):
 def match_detail(request, pk):
     match = get_object_or_404(Match, pk=pk)
 
-    now = timezone.now()
+    is_started = timezone.now() >= match.date
 
-    is_live = match.date <= now
-
-    return render(request, 'football/match_detail.html', {
-        'match': match,
-        'is_live': is_live
-    })
+    return render(
+        request,
+        'football/match_detail.html',
+        {
+            'match': match,
+            'is_started': is_started,
+        }
+    )
 
 
 
