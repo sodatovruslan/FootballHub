@@ -14,12 +14,28 @@
 
     <h2>{{ player.full_name }}</h2>
 
+    <p><strong>Team:</strong> {{ player.team.name }}</p>
+    <p><strong>Age:</strong> {{ player.age }}</p>
+    <p><strong>Number:</strong> {{ player.number }}</p>
+
+    <hr>
+
     <p>PAC: {{ player.pace }}</p>
     <p>SHO: {{ player.shooting }}</p>
     <p>PAS: {{ player.passing }}</p>
     <p>DRI: {{ player.dribbling }}</p>
     <p>DEF: {{ player.defending }}</p>
     <p>PHY: {{ player.physical }}</p>
+
+    <br>
+
+    <a href="{% url 'player_update' player.pk %}" class="btn btn-warning">
+        Update
+    </a>
+
+    <a href="{% url 'player_delete' player.pk %}" class="btn btn-danger">
+        Delete
+    </a>
 
 </div>
 
