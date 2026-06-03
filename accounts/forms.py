@@ -20,6 +20,12 @@ class RegisterForm(UserCreationForm):
         self.fields['password2'].help_text = ''
         self.fields['password2'].required = True
 
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError('Email already exists')
+        return email
+
     class Meta:
         model = User
         fields = (
@@ -48,11 +54,6 @@ class ResetConfirmForm(forms.Form):
     new_password = forms.CharField(
         widget=forms.PasswordInput
     )
-    
-# accounts/forms.py
-
-from django import forms
-from .models import Profile
 
 
 class ProfileForm(forms.ModelForm):

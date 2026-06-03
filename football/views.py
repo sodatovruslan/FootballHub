@@ -10,8 +10,6 @@ from .models import Team, Player, Tournament, Match, Standing, Lineup, MatchEven
 from stats.models import MatchStatistic
 
 
-
-
 def home_redirect(request):
     return redirect('team_list')
 
@@ -24,6 +22,7 @@ def team_list(request):
 def team_detail(request, pk):
     team = get_object_or_404(Team, pk=pk)
     return render(request, 'football/team_detail.html', {'team': team})
+
 
 
 def player_list(request):
@@ -86,6 +85,7 @@ def standings(request):
                     losses += 1
 
         points = wins * 3 + draws
+        goal_difference = goals_for - goals_against
 
         table.append({
             'team': team,
@@ -95,6 +95,7 @@ def standings(request):
             'losses': losses,
             'goals_for': goals_for,
             'goals_against': goals_against,
+            'goal_difference': goal_difference,
             'points': points
         })
 
@@ -165,8 +166,7 @@ class PlayerDeleteView(PermissionRequiredMixin, generic.DeleteView):
 
 
 # Tournament Views
-class TournamentListView(PermissionRequiredMixin, generic.ListView):
-    permission_required = 'football.add_tournament'
+class TournamentListView(generic.ListView):
     model = Tournament
     template_name = 'football/tournament_list.html'
     context_object_name = 'tournaments'

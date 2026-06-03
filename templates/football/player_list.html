@@ -43,6 +43,17 @@
         border-color: rgba(0, 212, 255, 0.8);
     }
 
+    .player-photo {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid rgba(0, 212, 255, 0.5);
+        margin: 0 auto 20px;
+        display: block;
+        box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+    }
+
     .item-card h3 {
         background: linear-gradient(90deg, #00d4ff, #7b2cbf, #00d4ff);
         background-size: 200% auto;
@@ -50,9 +61,10 @@
         -webkit-text-fill-color: transparent;
         background-clip: text;
         margin-bottom: 15px;
-        font-size: 2rem;
+        font-size: 1.8rem;
         font-weight: 800;
         animation: gradient 3s ease infinite;
+        text-align: center;
     }
 
     @keyframes gradient {
@@ -71,6 +83,7 @@
         color: #00d4ff;
         font-size: 1.1rem;
         text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        text-align: center;
     }
 
     .action-buttons {
@@ -124,6 +137,7 @@
     {% for player in players %}
         <div class="col-md-6 col-lg-4">
             <div class="item-card">
+                <img src="{{ player.get_photo_url }}" alt="{{ player.full_name }}" class="player-photo">
                 <h3>
                     <a href="{% url 'player_detail' player.pk %}" style="text-decoration: none; color: inherit;">
                         {{ player.full_name }}

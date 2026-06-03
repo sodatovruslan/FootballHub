@@ -42,37 +42,53 @@ def register(request):
         email = form.cleaned_data['email']
         password = form.cleaned_data['password1']
 
+        # Проверяем существует ли пользователь (активный или неактивный)
+        if User.objects.filter(username=username).exists():
+            return render(
+                request,
+                'accounts/register.html',
+                {'form': form, 'error': 'Username already exists'}
+            )
+
+        # Удаляем неактивных пользователей с тем же username
         User.objects.filter(
             username=username,
             is_active=False
         ).delete()
 
-        user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=password
-        )
+        try:
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password
+            )
 
-        user.is_active = False
-        user.save()
+            user.is_active = False
+            user.save()
 
-        Profile.objects.get_or_create(
-            user=user
-        )
+            Profile.objects.get_or_create(
+                user=user
+            )
 
-        send_confirmation_email(user)
+            send_confirmation_email(user)
 
-        # Получаем код для отображения на странице
-        confirm = EmailConfirm.objects.filter(user=user).first()
+            # Получаем код для отображения на странице
+            confirm = EmailConfirm.objects.filter(user=user).first()
 
-        return render(
-            request,
-            'accounts/confirm_email.html',
-            {
-                'username': user.username,
-                'confirmation_code': confirm.code if confirm else None
-            }
-        )
+            return render(
+                request,
+                'accounts/confirm_email.html',
+                {
+                    'username': user.username,
+                    'confirmation_code': confirm.code if confirm else None
+                }
+            )
+        except Exception as e:
+            return render(
+                request,
+                'accounts/register.html',
+                {'form': form, 'error': f'Error creating user: {str(e)}'}
+            )
 
     return render(
         request,
