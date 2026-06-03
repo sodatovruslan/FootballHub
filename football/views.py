@@ -5,7 +5,7 @@ from .models import Standing
 from django.urls import reverse_lazy
 from django.views import generic
 from django.utils import timezone
-
+from .models import Match, Lineup
 
 def home_redirect(request):
     return redirect('team_list')
@@ -18,10 +18,6 @@ def team_list(request):
 def team_detail(request, pk):
     team = get_object_or_404(Team, pk=pk)
     return render(request, 'football/team_detail.html', {'team': team})
-
-
-
-
 
 
 def player_list(request):
@@ -43,18 +39,37 @@ def match_list(request):
 
 
 
+
+
+
+
+
 def match_detail(request, pk):
     match = get_object_or_404(Match, pk=pk)
 
     is_started = timezone.now() >= match.date
 
+    home_lineup = Lineup.objects.filter(
+        match=match,
+        team=match.home_team
+    ).first()
+
+    away_lineup = Lineup.objects.filter(
+        match=match,
+        team=match.away_team
+    ).first()
+
+    context = {
+        'match': match,
+        'is_started': is_started,
+        'home_lineup': home_lineup,
+        'away_lineup': away_lineup,
+    }
+
     return render(
         request,
         'football/match_detail.html',
-        {
-            'match': match,
-            'is_started': is_started,
-        }
+        context
     )
 
 

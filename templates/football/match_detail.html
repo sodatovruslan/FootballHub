@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
+
 {% block content %}
+
 <h1>Match Detail</h1>
+
 <h2>
     {{ match.home_team }}
     {{ match.home_score }}
@@ -8,9 +11,19 @@
     {{ match.away_score }}
     {{ match.away_team }}
 </h2>
-<p><strong>Tournament:</strong> {{ match.tournament }}</p>
-<p><strong>Date:</strong> {{ match.date }}</p>
+
+<p>
+    <strong>Tournament:</strong>
+    {{ match.tournament }}
+</p>
+
+<p>
+    <strong>Date:</strong>
+    {{ match.date }}
+</p>
+
 <hr>
+
 {% if is_started %}
 
     {% if match.stream_url %}
@@ -18,13 +31,53 @@
             🎥 Смотреть трансляцию
         </a>
     {% else %}
-        <p>Трансляция недоступна.</p>
+        <p>Трансляция недоступна</p>
     {% endif %}
 
 {% else %}
 
     <h3>⏳ Матч ещё не начался</h3>
 
+{% endif %}
+
+<hr>
+
+<h2>Lineups</h2>
+
+{% if home_lineup %}
+    <h3>
+        {{ match.home_team }}
+        ({{ home_lineup.formation }})
+    </h3>
+
+    <ul>
+        {% for player in home_lineup.lineupplayer_set.all %}
+            <li>
+                {{ player.position }}
+                -
+                {{ player.player.full_name }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<hr>
+
+{% if away_lineup %}
+    <h3>
+        {{ match.away_team }}
+        ({{ away_lineup.formation }})
+    </h3>
+
+    <ul>
+        {% for player in away_lineup.lineupplayer_set.all %}
+            <li>
+                {{ player.position }}
+                -
+                {{ player.player.full_name }}
+            </li>
+        {% endfor %}
+    </ul>
 {% endif %}
 
 {% endblock %}
