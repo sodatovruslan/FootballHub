@@ -4,18 +4,21 @@ from django.contrib.auth.models import User
 
 
 class RegisterForm(UserCreationForm):
-    email = forms.EmailField()
+    email = forms.EmailField(required=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Убираем встроенную валидацию username Django
         self.fields['username'].validators = []
         self.fields['username'].help_text = ''
+        self.fields['username'].required = True
         # Убираем строгие требования к паролю
         self.fields['password1'].validators = []
         self.fields['password1'].help_text = ''
+        self.fields['password1'].required = True
         self.fields['password2'].validators = []
         self.fields['password2'].help_text = ''
+        self.fields['password2'].required = True
 
     class Meta:
         model = User
