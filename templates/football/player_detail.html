@@ -2,20 +2,25 @@
 
 {% block content %}
 
-<h1>{{ player.full_name }}</h1>
+<div class="fifa-card">
 
-<p>Team: {{ player.team.name }}</p>
-<p>Age: {{ player.age }}</p>
-<p>Number: {{ player.number }}</p>
-<p>Position: {{ player.position }}</p>
+    <h1>{{ player.overall }}</h1>
 
+    <h3>{{ player.position }}</h3>
 
-<a href="{% url 'player_update' player.pk %}" class="btn btn-warning">
-    Update
-</a>
+    {% if player.photo %}
+        <img src="{{ player.photo.url }}" width="200">
+    {% endif %}
 
-<a href="{% url 'player_delete' player.pk %}" class="btn btn-danger">
-    Delete
-</a>
+    <h2>{{ player.full_name }}</h2>
 
-{% endblock content %}
+    <p>PAC: {{ player.pace }}</p>
+    <p>SHO: {{ player.shooting }}</p>
+    <p>PAS: {{ player.passing }}</p>
+    <p>DRI: {{ player.dribbling }}</p>
+    <p>DEF: {{ player.defending }}</p>
+    <p>PHY: {{ player.physical }}</p>
+
+</div>
+
+{% endblock %}

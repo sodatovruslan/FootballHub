@@ -1,0 +1,13 @@
+.fifa-card{
+    width:300px;
+    margin:auto;
+    padding:20px;
+    border-radius:20px;
+    border:2px solid gold;
+    text-align:center;
+}
+
+.fifa-card img{
+    width:180px;
+    border-radius:10px;
+}
