@@ -42,8 +42,9 @@ def register(request):
         email = form.cleaned_data['email']
         password = form.cleaned_data['password1']
 
-        # Проверяем существует ли пользователь (активный или неактивный)
-        if User.objects.filter(username=username).exists():
+        # Проверяем существует ли активный пользователь
+        existing_user = User.objects.filter(username=username, is_active=True).first()
+        if existing_user:
             return render(
                 request,
                 'accounts/register.html',
@@ -72,7 +73,7 @@ def register(request):
 
             send_confirmation_email(user)
 
-            # Получаем код для отображения на странице
+    
             confirm = EmailConfirm.objects.filter(user=user).first()
 
             return render(
@@ -222,10 +223,17 @@ def confirm_email(request):
 
         if not confirm:
             return render(request,'accounts/confirm_email.html',{'form': form,'error': 'Invalid code'})
+
         user.is_active = True
         user.save()
         confirm.delete()
-        return redirect('login')
+
+        # Автоматически логиним пользователя после подтверждения email
+        from django.contrib.auth import login
+        login(request, user)
+
+        return redirect('home')
+
     return render(request,'accounts/confirm_email.html',{'form': form})
 
 

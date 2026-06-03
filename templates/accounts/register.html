@@ -87,28 +87,30 @@
     </div>
     {% endif %}
 
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger" style="background: rgba(255, 50, 50, 0.2); border: 2px solid rgba(255, 50, 50, 0.5); border-radius: 12px; color: #fff;">
+        {% for error in form.non_field_errors %}
+            {{ error }}
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <form method="post">
         {% csrf_token %}
 
-        <div class="mb-3">
-            <label for="id_username" class="form-label">Username</label>
-            <input type="text" name="username" class="form-control" id="id_username" placeholder="Enter username" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="id_email" class="form-label">Email</label>
-            <input type="email" name="email" class="form-control" id="id_email" placeholder="Enter email" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="id_password1" class="form-label">Password</label>
-            <input type="password" name="password1" class="form-control" id="id_password1" placeholder="Enter password" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="id_password2" class="form-label">Confirm Password</label>
-            <input type="password" name="password2" class="form-control" id="id_password2" placeholder="Confirm password" required>
-        </div>
+        {% for field in form %}
+            <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in field.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
 
         <button type="submit" class="btn btn-primary-gradient mt-4">
             Register

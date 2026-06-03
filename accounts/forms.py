@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from .models import Profile
 
 
 class RegisterForm(UserCreationForm):
@@ -12,13 +13,17 @@ class RegisterForm(UserCreationForm):
         self.fields['username'].validators = []
         self.fields['username'].help_text = ''
         self.fields['username'].required = True
+        self.fields['username'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Enter username'})
         # Убираем строгие требования к паролю
         self.fields['password1'].validators = []
         self.fields['password1'].help_text = ''
         self.fields['password1'].required = True
+        self.fields['password1'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Enter password'})
         self.fields['password2'].validators = []
         self.fields['password2'].help_text = ''
         self.fields['password2'].required = True
+        self.fields['password2'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Confirm password'})
+        self.fields['email'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Enter email'})
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
