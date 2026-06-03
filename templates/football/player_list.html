@@ -1,16 +1,68 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+    .item-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }
 
-<h1>Players</h1>
+    .item-card:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 40px rgba(0, 212, 255, 0.2);
+    }
 
-{% for player in players %}
-    <p>
-        <a href="/player/{{ player.pk }}/">
-            {{ player.full_name }}
+    .action-buttons {
+        margin-top: 15px;
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Players</h1>
+    {% if perms.football.add_player %}
+        <a href="{% url 'player_create' %}" class="btn btn-primary-gradient">
+            + Add Player
         </a>
-        - {{ player.team.name }}
-    </p>
-{% endfor %}
+    {% endif %}
+</div>
 
+<div class="row">
+    {% for player in players %}
+        <div class="col-md-6 col-lg-4">
+            <div class="item-card">
+                <h3>
+                    <a href="{% url 'player_detail' player.pk %}" style="text-decoration: none; color: inherit;">
+                        {{ player.full_name }}
+                    </a>
+                </h3>
+                <p class="text-muted">{{ player.team.name }} - #{{ player.number }} ({{ player.position }})</p>
+
+                <div class="action-buttons">
+                    {% if perms.football.change_player %}
+                        <a href="{% url 'player_update' player.pk %}" class="btn btn-glass btn-sm me-2">
+                            Edit
+                        </a>
+                    {% endif %}
+                    {% if perms.football.delete_player %}
+                        <a href="{% url 'player_delete' player.pk %}" class="btn btn-glass btn-sm" style="background: rgba(255, 0, 0, 0.2);">
+                            Delete
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="text-center text-muted">
+                <p>No players available.</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
 {% endblock content %}

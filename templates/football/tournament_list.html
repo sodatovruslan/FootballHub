@@ -1,20 +1,68 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+    .item-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }
 
-<h1>Tournaments</h1>
+    .item-card:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 40px rgba(0, 212, 255, 0.2);
+    }
 
-<a href="{% url 'tournament_create' %}" class="btn btn-success mb-3">
-    Create Tournament
-</a>
+    .action-buttons {
+        margin-top: 15px;
+    }
+</style>
 
-{% for tournament in tournaments %}
-    <p>
-        <a href="{% url 'tournament_detail' tournament.pk %}">
-            {{ tournament.name }}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Tournaments</h1>
+    {% if perms.football.add_tournament %}
+        <a href="{% url 'tournament_create' %}" class="btn btn-primary-gradient">
+            + Add Tournament
         </a>
-        ({{ tournament.season }})
-    </p>
-{% endfor %}
+    {% endif %}
+</div>
 
+<div class="row">
+    {% for tournament in tournaments %}
+        <div class="col-md-6 col-lg-4">
+            <div class="item-card">
+                <h3>
+                    <a href="{% url 'tournament_detail' tournament.pk %}" style="text-decoration: none; color: inherit;">
+                        {{ tournament.name }}
+                    </a>
+                </h3>
+                <p class="text-muted">{{ tournament.season }}</p>
+
+                <div class="action-buttons">
+                    {% if perms.football.change_tournament %}
+                        <a href="{% url 'tournament_update' tournament.pk %}" class="btn btn-glass btn-sm me-2">
+                            Edit
+                        </a>
+                    {% endif %}
+                    {% if perms.football.delete_tournament %}
+                        <a href="{% url 'tournament_delete' tournament.pk %}" class="btn btn-glass btn-sm" style="background: rgba(255, 0, 0, 0.2);">
+                            Delete
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="text-center text-muted">
+                <p>No tournaments available.</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
 {% endblock %}
