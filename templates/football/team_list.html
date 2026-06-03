@@ -3,30 +3,118 @@
 {% block content %}
 <style>
     .item-card {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 20px;
-        padding: 25px;
-        margin-bottom: 20px;
-        transition: all 0.3s ease;
+        background: linear-gradient(145deg, rgba(20, 20, 30, 0.95), rgba(40, 40, 50, 0.95));
+        border: 2px solid rgba(0, 212, 255, 0.3);
+        border-radius: 25px;
+        padding: 30px;
+        margin-bottom: 25px;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .item-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+        transform: rotate(45deg);
+        transition: all 0.6s ease;
+        opacity: 0;
+    }
+
+    .item-card:hover::before {
+        opacity: 1;
+        animation: shine 1.5s ease-in-out;
+    }
+
+    @keyframes shine {
+        0% { transform: translateX(-100%) rotate(45deg); }
+        100% { transform: translateX(100%) rotate(45deg); }
     }
 
     .item-card:hover {
-        background: rgba(255, 255, 255, 0.1);
-        transform: translateY(-5px);
-        box-shadow: 0 10px 40px rgba(0, 212, 255, 0.2);
+        transform: translateY(-10px) scale(1.03);
+        box-shadow: 0 25px 70px rgba(0, 212, 255, 0.4), 0 0 30px rgba(0, 212, 255, 0.2);
+        border-color: rgba(0, 212, 255, 0.8);
+    }
+
+    .item-card h3 {
+        background: linear-gradient(90deg, #00d4ff, #7b2cbf, #00d4ff);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 15px;
+        font-size: 2rem;
+        font-weight: 800;
+        animation: gradient 3s ease infinite;
+    }
+
+    @keyframes gradient {
+        0% { background-position: 0% center; }
+        50% { background-position: 100% center; }
+        100% { background-position: 0% center; }
+    }
+
+    .item-card .team-info {
+        background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(123, 44, 191, 0.15));
+        border-left: 4px solid #00d4ff;
+        padding: 12px 20px;
+        margin-top: 20px;
+        border-radius: 10px;
+        font-weight: 700;
+        color: #00d4ff;
+        font-size: 1.1rem;
+        text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
     }
 
     .action-buttons {
-        margin-top: 15px;
+        margin-top: 25px;
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn-glass-dark {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+        border: 2px solid rgba(0, 212, 255, 0.4);
+        color: #fff;
+        padding: 12px 25px;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        backdrop-filter: blur(10px);
+        flex: 1;
+        text-align: center;
+    }
+
+    .btn-glass-dark:hover {
+        background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(123, 44, 191, 0.3));
+        border-color: #00d4ff;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+    }
+
+    .btn-delete {
+        border-color: rgba(255, 50, 50, 0.4);
+    }
+
+    .btn-delete:hover {
+        background: linear-gradient(135deg, rgba(255, 50, 50, 0.3), rgba(255, 0, 0, 0.2));
+        border-color: #ff3232;
+        box-shadow: 0 10px 30px rgba(255, 50, 50, 0.3);
     }
 </style>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Teams</h1>
+<div class="d-flex justify-content-between align-items-center mb-5">
+    <h1 style="background: linear-gradient(90deg, #00d4ff, #7b2cbf); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 3rem; font-weight: 800;">🏆 Teams</h1>
     {% if perms.football.add_team %}
-        <a href="{% url 'team_create' %}" class="btn btn-primary-gradient">
+        <a href="{% url 'team_create' %}" class="btn btn-primary-gradient" style="padding: 15px 30px; font-size: 1.1rem; font-weight: 700; border-radius: 15px;">
             + Add Team
         </a>
     {% endif %}
@@ -41,17 +129,19 @@
                         {{ team.name }}
                     </a>
                 </h3>
-                <p class="text-muted">{{ team.city }}</p>
+                <div class="team-info">
+                    📍 {{ team.city }}
+                </div>
 
                 <div class="action-buttons">
                     {% if perms.football.change_team %}
-                        <a href="{% url 'team_update' team.pk %}" class="btn btn-glass btn-sm me-2">
-                            Edit
+                        <a href="{% url 'team_update' team.pk %}" class="btn-glass-dark">
+                            ✏️ Edit
                         </a>
                     {% endif %}
                     {% if perms.football.delete_team %}
-                        <a href="{% url 'team_delete' team.pk %}" class="btn btn-glass btn-sm" style="background: rgba(255, 0, 0, 0.2);">
-                            Delete
+                        <a href="{% url 'team_delete' team.pk %}" class="btn-glass-dark btn-delete">
+                            🗑️ Delete
                         </a>
                     {% endif %}
                 </div>
@@ -59,8 +149,8 @@
         </div>
     {% empty %}
         <div class="col-12">
-            <div class="text-center text-muted">
-                <p>No teams available.</p>
+            <div class="text-center text-muted" style="padding: 50px;">
+                <p style="font-size: 1.5rem;">No teams available.</p>
             </div>
         </div>
     {% endfor %}
