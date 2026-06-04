@@ -177,6 +177,82 @@
         color: rgba(255, 255, 255, 0.7);
         font-size: 0.9rem;
     }
+
+    .football-field {
+        background: linear-gradient(135deg, #2d5a27, #1e3d1a);
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 20px;
+        padding: 30px;
+        margin: 20px 0;
+        position: relative;
+        min-height: 400px;
+    }
+
+    .field-lines {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .center-line {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.5);
+    }
+
+    .center-circle {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100px;
+        height: 100px;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+    }
+
+    .field-player {
+        position: absolute;
+        background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(123, 44, 191, 0.3));
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #fff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 10;
+    }
+
+    .field-player:hover {
+        transform: scale(1.2);
+        background: linear-gradient(135deg, rgba(0, 212, 255, 0.5), rgba(123, 44, 191, 0.5));
+        box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+    }
+
+    .field-player-gk {
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 165, 0, 0.3));
+        border-color: rgba(255, 215, 0, 0.5);
+    }
+
+    .formation-title {
+        text-align: center;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #00d4ff;
+        margin-bottom: 20px;
+    }
 </style>
 
 <div class="glass-card">
@@ -294,30 +370,42 @@
         <div id="lineups" class="tab-content">
             <div class="row">
                 <div class="col-md-6">
-                    <h3 class="mb-3">{{ match.home_team.name }} Lineup</h3>
+                    <h3 class="formation-title">{{ match.home_team.name }} ({{ home_lineup.formation|default:"4-4-2" }})</h3>
                     {% if home_lineup %}
-                        <p class="text-muted mb-3">Formation: {{ home_lineup.formation }}</p>
-                        {% for player in home_lineup.lineupplayer_set.all %}
-                            <div class="lineup-player d-flex justify-content-between align-items-center">
-                                <span>{{ player.player.full_name }}</span>
-                                <span class="position-badge">{{ player.position }}</span>
-                            </div>
-                        {% endfor %}
+                        <div class="football-field">
+                            <div class="field-lines"></div>
+                            <div class="center-line"></div>
+                            <div class="center-circle"></div>
+
+                            {% for player in home_lineup.lineupplayer_set.all %}
+                                <div class="field-player {% if player.player.position == 'GK' %}field-player-gk{% endif %}"
+                                     style="left: {{ player.x_position|default:50 }}%; top: {{ player.y_position|default:50 }}%;"
+                                     title="{{ player.player.full_name }}">
+                                    {{ player.player.number }}
+                                </div>
+                            {% endfor %}
+                        </div>
                     {% else %}
                         <p class="text-muted">Lineup not available</p>
                     {% endif %}
                 </div>
 
                 <div class="col-md-6">
-                    <h3 class="mb-3">{{ match.away_team.name }} Lineup</h3>
+                    <h3 class="formation-title">{{ match.away_team.name }} ({{ away_lineup.formation|default:"4-4-2" }})</h3>
                     {% if away_lineup %}
-                        <p class="text-muted mb-3">Formation: {{ away_lineup.formation }}</p>
-                        {% for player in away_lineup.lineupplayer_set.all %}
-                            <div class="lineup-player d-flex justify-content-between align-items-center">
-                                <span>{{ player.player.full_name }}</span>
-                                <span class="position-badge">{{ player.position }}</span>
-                            </div>
-                        {% endfor %}
+                        <div class="football-field">
+                            <div class="field-lines"></div>
+                            <div class="center-line"></div>
+                            <div class="center-circle"></div>
+
+                            {% for player in away_lineup.lineupplayer_set.all %}
+                                <div class="field-player {% if player.player.position == 'GK' %}field-player-gk{% endif %}"
+                                     style="left: {{ player.x_position|default:50 }}%; top: {{ player.y_position|default:50 }}%;"
+                                     title="{{ player.player.full_name }}">
+                                    {{ player.player.number }}
+                                </div>
+                            {% endfor %}
+                        </div>
                     {% else %}
                         <p class="text-muted">Lineup not available</p>
                     {% endif %}

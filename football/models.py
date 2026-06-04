@@ -125,6 +125,9 @@ class LineupPlayer(models.Model):
         max_length=10
     )
 
+    x_position = models.PositiveIntegerField(default=50, help_text="X position on field (0-100)")
+    y_position = models.PositiveIntegerField(default=50, help_text="Y position on field (0-100)")
+
     def __str__(self):
         return self.player.full_name
     
