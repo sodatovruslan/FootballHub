@@ -4,7 +4,7 @@ from django.views import generic
 from django.utils import timezone
 from django.db.models import Q, Count
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 
 from .models import Team, Player, Tournament, Match, Standing, Lineup, MatchEvent
 from stats.models import MatchStatistic
@@ -81,6 +81,7 @@ def standings(request):
     return render(request, 'football/standings.html', {'table': table})
 
 
+@login_required
 def top_scorers(request):
     scorers = (
         MatchEvent.objects
@@ -144,16 +145,18 @@ class PlayerDeleteView(PermissionRequiredMixin, generic.DeleteView):
 
 
 # Tournament Views
-class TournamentListView(generic.ListView):
+class TournamentListView(LoginRequiredMixin, generic.ListView):
     model = Tournament
     template_name = 'football/tournament_list.html'
     context_object_name = 'tournaments'
+    login_url = '/login/'
 
 
-class TournamentDetailView(generic.DetailView):
+class TournamentDetailView(LoginRequiredMixin, generic.DetailView):
     model = Tournament
     template_name = 'football/tournament_detail.html'
     context_object_name = 'tournament'
+    login_url = '/login/'
 
 
 class TournamentCreateView(PermissionRequiredMixin, generic.CreateView):
@@ -180,16 +183,18 @@ class TournamentDeleteView(PermissionRequiredMixin, generic.DeleteView):
 
 
 # Match Views
-class MatchListView(generic.ListView):
+class MatchListView(LoginRequiredMixin, generic.ListView):
     model = Match
     template_name = 'football/match_list.html'
     context_object_name = 'matches'
+    login_url = '/login/'
 
 
-class MatchDetailView(generic.DetailView):
+class MatchDetailView(LoginRequiredMixin, generic.DetailView):
     model = Match
     template_name = 'football/match_detail.html'
     context_object_name = 'match'
+    login_url = '/login/'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -239,7 +244,8 @@ class MatchDeleteView(PermissionRequiredMixin, generic.DeleteView):
 
 
 # MatchEvent Views
-class MatchEventListView(generic.ListView):
+class MatchEventListView(LoginRequiredMixin, generic.ListView):
     model = MatchEvent
     template_name = 'football/match_event_list.html'
     context_object_name = 'match_events'
+    login_url = '/login/'

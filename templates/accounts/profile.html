@@ -2,114 +2,245 @@
 
 {% block content %}
 <style>
-    .favorite-team-section {
-        background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.05));
-        border: 2px solid rgba(255, 215, 0, 0.3);
+    .profile-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    .profile-card {
+        background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(123, 44, 191, 0.1));
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(0, 212, 255, 0.3);
+        border-radius: 30px;
+        padding: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .profile-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+        transform: rotate(45deg);
+        animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+        0% { left: -50%; }
+        100% { left: 50%; }
+    }
+
+    .profile-header {
+        text-align: center;
+        margin-bottom: 40px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .profile-avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid rgba(0, 212, 255, 0.5);
+        margin-bottom: 20px;
+        box-shadow: 0 15px 40px rgba(0, 212, 255, 0.4);
+        transition: all 0.3s ease;
+    }
+
+    .profile-avatar:hover {
+        transform: scale(1.05);
+        box-shadow: 0 20px 50px rgba(0, 212, 255, 0.6);
+    }
+
+    .profile-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+    }
+
+    .profile-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .info-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 20px;
-        padding: 25px;
-        margin: 20px 0;
+        padding: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .info-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(0, 212, 255, 0.3);
+        transform: translateY(-5px);
+    }
+
+    .info-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .info-value {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    .favorite-team-section {
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.08));
+        border: 2px solid rgba(255, 215, 0, 0.4);
+        border-radius: 25px;
+        padding: 30px;
+        margin: 30px 0;
+        position: relative;
+        z-index: 1;
     }
 
     .favorite-team-title {
-        font-size: 1.5rem;
-        font-weight: 700;
+        font-size: 1.8rem;
+        font-weight: 800;
         background: linear-gradient(90deg, #ffd700, #ffaa00);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
     }
 
     .favorite-team-card {
         display: flex;
         align-items: center;
-        gap: 20px;
-        padding: 20px;
+        gap: 25px;
+        padding: 25px;
         background: rgba(255, 255, 255, 0.05);
-        border-radius: 15px;
+        border-radius: 20px;
         transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
     }
 
     .favorite-team-card:hover {
-        background: rgba(255, 255, 255, 0.08);
-        transform: translateY(-3px);
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(255, 215, 0, 0.3);
     }
 
     .favorite-team-logo {
-        width: 80px;
-        height: 80px;
+        width: 100px;
+        height: 100px;
         object-fit: contain;
-        border-radius: 10px;
+        border-radius: 15px;
+        border: 2px solid rgba(255, 215, 0, 0.3);
     }
 
     .favorite-team-info h3 {
-        font-size: 1.3rem;
+        font-size: 1.5rem;
         font-weight: 700;
         color: #ffd700;
-        margin-bottom: 5px;
+        margin-bottom: 10px;
     }
 
     .favorite-team-info p {
-        color: rgba(255, 255, 255, 0.7);
-        margin: 0;
+        color: rgba(255, 255, 255, 0.8);
+        margin: 5px 0;
+        font-size: 1rem;
     }
 
     .no-favorite {
         color: rgba(255, 255, 255, 0.6);
         font-style: italic;
+        font-size: 1.1rem;
+    }
+
+    .btn-edit {
+        background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+        border: none;
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-weight: 600;
+        color: #fff;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-edit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
     }
 </style>
 
-<h1>Profile</h1>
-
-{% if profile.avatar %}
-    <img src="{{ profile.avatar.url }}"
-         width="200">
-{% endif %}
-
-<p>
-    <strong>Username:</strong>
-    {{ request.user.username }}
-</p>
-
-<p>
-    <strong>Email:</strong>
-    {{ request.user.email }}
-</p>
-
-<p>
-    <strong>Bio:</strong>
-    {{ profile.bio }}
-</p>
-
-<p>
-    <strong>Created:</strong>
-    {{ profile.created_at }}
-</p>
-
-<div class="favorite-team-section">
-    <h2 class="favorite-team-title">⭐ Favorite Team</h2>
-    {% if profile.favorite_team %}
-        <a href="{% url 'team_detail' profile.favorite_team.pk %}" class="favorite-team-card" style="text-decoration: none; color: inherit;">
-            {% if profile.favorite_team.logo %}
-                <img src="{{ profile.favorite_team.logo.url }}" alt="{{ profile.favorite_team.name }}" class="favorite-team-logo">
+<div class="profile-container">
+    <div class="profile-card">
+        <div class="profile-header">
+            {% if profile.avatar %}
+                <img src="{{ profile.avatar.url }}" alt="{{ request.user.username }}" class="profile-avatar">
             {% else %}
-                <div class="favorite-team-logo" style="background: rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; font-size: 2rem;">⚽</div>
+                <div class="profile-avatar" style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(123, 44, 191, 0.3)); display: flex; align-items: center; justify-content: center; font-size: 4rem;">👤</div>
             {% endif %}
-            <div class="favorite-team-info">
-                <h3>{{ profile.favorite_team.name }}</h3>
-                <p>🏟 {{ profile.favorite_team.stadium|default:"No stadium" }}</p>
-                <p>📍 {{ profile.favorite_team.city }}</p>
-            </div>
-        </a>
-    {% else %}
-        <p class="no-favorite">You haven't selected a favorite team yet. Go to any team page and click "⭐ Add to Favorites"!</p>
-    {% endif %}
-</div>
+            <h1 class="profile-title">{{ request.user.username }}</h1>
+        </div>
 
-<a href="{% url 'profile_update' %}"
-   class="btn btn-warning">
-    Edit Profile
-</a>
+        <div class="profile-info">
+            <div class="info-card">
+                <div class="info-label">Email</div>
+                <div class="info-value">{{ request.user.email }}</div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">Bio</div>
+                <div class="info-value">{{ profile.bio|default:"No bio yet" }}</div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">Member Since</div>
+                <div class="info-value">{{ profile.created_at|date:"F j, Y" }}</div>
+            </div>
+        </div>
+
+        <div class="favorite-team-section">
+            <h2 class="favorite-team-title">⭐ Favorite Team</h2>
+            {% if profile.favorite_team %}
+                <a href="{% url 'team_detail' profile.favorite_team.pk %}" class="favorite-team-card">
+                    {% if profile.favorite_team.logo %}
+                        <img src="{{ profile.favorite_team.logo.url }}" alt="{{ profile.favorite_team.name }}" class="favorite-team-logo">
+                    {% else %}
+                        <div class="favorite-team-logo" style="background: rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">⚽</div>
+                    {% endif %}
+                    <div class="favorite-team-info">
+                        <h3>{{ profile.favorite_team.name }}</h3>
+                        <p>🏟 {{ profile.favorite_team.stadium|default:"No stadium" }}</p>
+                        <p>📍 {{ profile.favorite_team.city }}</p>
+                    </div>
+                </a>
+            {% else %}
+                <p class="no-favorite">You haven't selected a favorite team yet. Go to any team page and click "⭐ Add to Favorites"!</p>
+            {% endif %}
+        </div>
+
+        <div style="text-align: center; position: relative; z-index: 1;">
+            <a href="{% url 'profile_update' %}" class="btn-edit">
+                ✏️ Edit Profile
+            </a>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

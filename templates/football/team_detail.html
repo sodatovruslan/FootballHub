@@ -2,16 +2,95 @@
 
 {% block content %}
 <style>
+    .team-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    .team-header {
+        background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(123, 44, 191, 0.15));
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(0, 212, 255, 0.3);
+        border-radius: 30px;
+        padding: 40px;
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .team-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+        transform: rotate(45deg);
+        animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+        0% { left: -50%; }
+        100% { left: 50%; }
+    }
+
+    .team-info {
+        display: flex;
+        align-items: center;
+        gap: 40px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .team-logo {
+        width: 150px;
+        height: 150px;
+        object-fit: contain;
+        border-radius: 20px;
+        border: 3px solid rgba(0, 212, 255, 0.4);
+        box-shadow: 0 15px 40px rgba(0, 212, 255, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .team-logo:hover {
+        transform: scale(1.05);
+        box-shadow: 0 20px 50px rgba(0, 212, 255, 0.5);
+    }
+
+    .team-details h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 20px;
+    }
+
+    .team-details p {
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.9);
+        margin: 10px 0;
+    }
+
+    .team-details .icon {
+        font-size: 1.3rem;
+        margin-right: 10px;
+    }
+
     .favorite-btn {
         background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1));
         border: 2px solid rgba(255, 215, 0, 0.4);
-        padding: 10px 25px;
+        padding: 12px 30px;
         border-radius: 25px;
         font-weight: 600;
+        font-size: 1rem;
         color: #ffd700;
         transition: all 0.3s ease;
         cursor: pointer;
-        margin-bottom: 20px;
+        margin-top: 20px;
     }
 
     .favorite-btn:hover {
@@ -27,6 +106,40 @@
         border-color: #ffd700;
     }
 
+    .players-section {
+        background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(123, 44, 191, 0.1));
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(0, 212, 255, 0.3);
+        border-radius: 30px;
+        padding: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .players-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+        transform: rotate(45deg);
+        animation: shine 4s infinite;
+    }
+
+    .players-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 30px;
+        position: relative;
+        z-index: 1;
+    }
+
     .fifa-card {
         background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(123, 44, 191, 0.15));
         backdrop-filter: blur(20px);
@@ -37,12 +150,29 @@
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
+        z-index: 1;
+    }
+
+    .fifa-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+        transform: rotate(45deg);
+        transition: all 0.5s ease;
     }
 
     .fifa-card:hover {
         transform: translateY(-10px);
         box-shadow: 0 20px 40px rgba(0, 212, 255, 0.4);
         border-color: rgba(0, 212, 255, 0.6);
+    }
+
+    .fifa-card:hover::before {
+        left: 50%;
     }
 
     .fifa-rating {
@@ -71,6 +201,8 @@
         margin: 20px auto;
         border: 3px solid rgba(0, 212, 255, 0.3);
         box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
+        position: relative;
+        z-index: 1;
     }
 
     .fifa-number {
@@ -96,6 +228,8 @@
         font-weight: 700;
         color: #fff;
         margin-bottom: 10px;
+        position: relative;
+        z-index: 1;
     }
 
     .fifa-position {
@@ -107,6 +241,8 @@
         font-weight: 600;
         color: #fff;
         display: inline-block;
+        position: relative;
+        z-index: 1;
     }
 
     .fifa-stats {
@@ -114,6 +250,8 @@
         grid-template-columns: repeat(2, 1fr);
         gap: 8px;
         margin-top: 15px;
+        position: relative;
+        z-index: 1;
     }
 
     .fifa-stat {
@@ -136,83 +274,102 @@
         font-weight: 700;
         color: #00d4ff;
     }
+
+    .admin-buttons {
+        margin-top: 30px;
+        display: flex;
+        gap: 15px;
+        position: relative;
+        z-index: 1;
+    }
 </style>
 
-{% if team.logo %}
-    <img src="{{ team.logo.url }}" width="150">
-{% else %}
-    <p>No logo</p>
-{% endif %}
-<h1>{{ team.name }}</h1>
-<p>🏟 Stadium: {{ team.stadium }}</p>
-<p>👥 Capacity: {{ team.capacity }}</p>
-<p>City: {{ team.city }}</p>
-
-{% if user.is_authenticated %}
-    {% csrf_token %}
-    {% if user.profile.favorite_team == team %}
-        <button class="favorite-btn active" onclick="removeFavorite()">
-            ⭐ Remove from Favorites
-        </button>
-    {% else %}
-        <button class="favorite-btn" onclick="addFavorite()">
-            ⭐ Add to Favorites
-        </button>
-    {% endif %}
-{% endif %}
-
-<h3 class="mt-4 mb-4">Players</h3>
-
-<div class="row">
-    {% for player in team.players.all %}
-        <div class="col-md-4 col-sm-6 mb-3">
-            <div class="fifa-card">
-                <div class="fifa-rating">{{ player.overall }}</div>
-                <img src="{{ player.get_photo_url }}" alt="{{ player.full_name }}" class="fifa-photo">
-                <div class="fifa-number">{{ player.number }}</div>
-                <div class="fifa-name">{{ player.full_name }}</div>
-                <div class="fifa-position">{{ player.get_position_display }}</div>
-
-                <div class="fifa-stats mt-3">
-                    <div class="fifa-stat">
-                        <span class="stat-label">PAC</span>
-                        <span class="stat-value">{{ player.pace }}</span>
-                    </div>
-                    <div class="fifa-stat">
-                        <span class="stat-label">SHO</span>
-                        <span class="stat-value">{{ player.shooting }}</span>
-                    </div>
-                    <div class="fifa-stat">
-                        <span class="stat-label">PAS</span>
-                        <span class="stat-value">{{ player.passing }}</span>
-                    </div>
-                    <div class="fifa-stat">
-                        <span class="stat-label">DRI</span>
-                        <span class="stat-value">{{ player.dribbling }}</span>
-                    </div>
-                    <div class="fifa-stat">
-                        <span class="stat-label">DEF</span>
-                        <span class="stat-value">{{ player.defending }}</span>
-                    </div>
-                    <div class="fifa-stat">
-                        <span class="stat-label">PHY</span>
-                        <span class="stat-value">{{ player.physical }}</span>
-                    </div>
-                </div>
+<div class="team-container">
+    <div class="team-header">
+        <div class="team-info">
+            {% if team.logo %}
+                <img src="{{ team.logo.url }}" alt="{{ team.name }}" class="team-logo">
+            {% else %}
+                <div class="team-logo" style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(123, 44, 191, 0.3)); display: flex; align-items: center; justify-content: center; font-size: 4rem;">⚽</div>
+            {% endif %}
+            <div class="team-details">
+                <h1>{{ team.name }}</h1>
+                <p><span class="icon">🏟</span> Stadium: {{ team.stadium|default:"No stadium" }}</p>
+                <p><span class="icon">👥</span> Capacity: {{ team.capacity|default:"N/A" }}</p>
+                <p><span class="icon">📍</span> City: {{ team.city }}</p>
+                {% if user.is_authenticated %}
+                    {% csrf_token %}
+                    {% if user.profile.favorite_team == team %}
+                        <button class="favorite-btn active" onclick="removeFavorite()">
+                            ⭐ Remove from Favorites
+                        </button>
+                    {% else %}
+                        <button class="favorite-btn" onclick="addFavorite()">
+                            ⭐ Add to Favorites
+                        </button>
+                    {% endif %}
+                {% endif %}
             </div>
         </div>
-    {% endfor %}
+    </div>
+
+    <div class="players-section">
+        <h2 class="players-title">⚽ Players</h2>
+
+        <div class="row">
+            {% for player in team.players.all %}
+                <div class="col-md-4 col-sm-6 mb-3">
+                    <div class="fifa-card">
+                        <div class="fifa-rating">{{ player.overall }}</div>
+                        <img src="{{ player.get_photo_url }}" alt="{{ player.full_name }}" class="fifa-photo">
+                        <div class="fifa-number">{{ player.number }}</div>
+                        <div class="fifa-name">{{ player.full_name }}</div>
+                        <div class="fifa-position">{{ player.get_position_display }}</div>
+
+                        <div class="fifa-stats mt-3">
+                            <div class="fifa-stat">
+                                <span class="stat-label">PAC</span>
+                                <span class="stat-value">{{ player.pace }}</span>
+                            </div>
+                            <div class="fifa-stat">
+                                <span class="stat-label">SHO</span>
+                                <span class="stat-value">{{ player.shooting }}</span>
+                            </div>
+                            <div class="fifa-stat">
+                                <span class="stat-label">PAS</span>
+                                <span class="stat-value">{{ player.passing }}</span>
+                            </div>
+                            <div class="fifa-stat">
+                                <span class="stat-label">DRI</span>
+                                <span class="stat-value">{{ player.dribbling }}</span>
+                            </div>
+                            <div class="fifa-stat">
+                                <span class="stat-label">DEF</span>
+                                <span class="stat-value">{{ player.defending }}</span>
+                            </div>
+                            <div class="fifa-stat">
+                                <span class="stat-label">PHY</span>
+                                <span class="stat-value">{{ player.physical }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if perms.football.change_team or perms.football.delete_team %}
+            <div class="admin-buttons">
+                <a href="{% url 'team_update' team.pk %}" class="btn btn-warning">
+                    Update
+                </a>
+
+                <a href="{% url 'team_delete' team.pk %}" class="btn btn-danger">
+                    Delete
+                </a>
+            </div>
+        {% endif %}
+    </div>
 </div>
-
-{% if perms.football.change_team or perms.football.delete_team %}
-    <a href="{% url 'team_update' team.pk %}" class="btn btn-warning">
-        Update
-    </a>
-
-    <a href="{% url 'team_delete' team.pk %}" class="btn btn-danger">
-        Delete
-    </a>
-{% endif %}
 
 <script>
 function getCookie(name) {

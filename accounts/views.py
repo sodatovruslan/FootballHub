@@ -59,7 +59,6 @@ def register(request):
             Profile.objects.get_or_create(user=user)
             send_confirmation_email(user)
 
-            # ✅ redirect внутри POST блока, user существует
             return redirect(f"{reverse('confirm_email')}?username={user.username}")
 
         except Exception as e:
@@ -68,7 +67,6 @@ def register(request):
                 'error': f'Error creating user: {str(e)}'
             })
 
-    # ✅ GET запрос — просто показываем форму
     return render(request, 'accounts/register.html', {'form': form})
 
 
@@ -173,7 +171,7 @@ def confirm_email(request):
     form = ConfirmEmailForm(request.POST or None)
 
     if request.method == 'POST' and form.is_valid():
-        username = request.POST.get('username')  # ✅ достаём username
+        username = request.POST.get('username')
         code = form.cleaned_data['code']
 
         user = User.objects.filter(username=username).first()
@@ -182,7 +180,7 @@ def confirm_email(request):
             return render(request, 'accounts/confirm_email.html', {
                 'form': form,
                 'error': 'User not found',
-                'username': username  # ✅ возвращаем обратно
+                'username': username
             })
 
         confirm = EmailConfirm.objects.filter(user=user, code=code).first()
@@ -191,7 +189,7 @@ def confirm_email(request):
             return render(request, 'accounts/confirm_email.html', {
                 'form': form,
                 'error': 'Invalid code',
-                'username': username  # ✅ возвращаем обратно
+                'username': username
             })
 
         user.is_active = True
