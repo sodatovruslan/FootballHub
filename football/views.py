@@ -200,7 +200,7 @@ class MatchDetailView(LoginRequiredMixin, generic.DetailView):
         context = super().get_context_data(**kwargs)
         match = self.object
         context['statistic'] = MatchStatistic.objects.filter(match=match).first()
-        context['is_started'] = timezone.now() >= match.date
+        context['is_started'] = match.is_live
         context['home_lineup'] = Lineup.objects.filter(match=match, team=match.home_team).first()
         context['away_lineup'] = Lineup.objects.filter(match=match, team=match.away_team).first()
         return context
