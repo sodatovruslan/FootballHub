@@ -96,6 +96,87 @@
         border-radius: 4px;
         transition: width 0.5s ease;
     }
+
+    .tab-container {
+        margin-bottom: 30px;
+    }
+
+    .tab-buttons {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .tab-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 25px;
+        padding: 10px 25px;
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .tab-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(0, 212, 255, 0.5);
+        color: #00d4ff;
+    }
+
+    .tab-btn.active {
+        background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+        border-color: rgba(0, 212, 255, 0.5);
+        color: #fff;
+    }
+
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .event-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .event-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateX(5px);
+    }
+
+    .event-minute {
+        background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: 700;
+        min-width: 60px;
+        text-align: center;
+    }
+
+    .event-icon {
+        font-size: 1.5rem;
+    }
+
+    .event-player {
+        font-weight: 600;
+        color: #00d4ff;
+    }
+
+    .event-type {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
+    }
 </style>
 
 <div class="glass-card">
@@ -155,83 +236,139 @@
 
     <hr style="border-color: rgba(255, 255, 255, 0.1);">
 
-    <!-- Lineups -->
-    <div class="row">
-        <div class="col-md-6">
-            <h3 class="mb-3">{{ match.home_team.name }} Lineup</h3>
-            {% if home_lineup %}
-                <p class="text-muted mb-3">Formation: {{ home_lineup.formation }}</p>
-                {% for player in home_lineup.lineupplayer_set.all %}
-                    <div class="lineup-player d-flex justify-content-between align-items-center">
-                        <span>{{ player.player.full_name }}</span>
-                        <span class="position-badge">{{ player.position }}</span>
+    <!-- Tabs -->
+    <div class="tab-container">
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="showTab('statistics')">📊 Statistics</button>
+            <button class="tab-btn" onclick="showTab('lineups')">👥 Lineups</button>
+            <button class="tab-btn" onclick="showTab('events')">⚽ Events</button>
+        </div>
+
+        <!-- Statistics Tab -->
+        <div id="statistics" class="tab-content active">
+            <h3 class="mb-4 text-center">📊 Match Statistics</h3>
+
+            {% if statistic %}
+                <div class="glass-card" style="background: rgba(255, 255, 255, 0.03);">
+                    <div class="stat-row d-flex justify-content-between align-items-center">
+                        <div class="stat-value">{{ statistic.home_shots }}</div>
+                        <div class="stat-label">Shots</div>
+                        <div class="stat-value">{{ statistic.away_shots }}</div>
                     </div>
-                {% endfor %}
+
+                    <div class="stat-row d-flex justify-content-between align-items-center">
+                        <div class="stat-value">{{ statistic.home_shots_on_target }}</div>
+                        <div class="stat-label">Shots on Target</div>
+                        <div class="stat-value">{{ statistic.away_shots_on_target }}</div>
+                    </div>
+
+                    <div class="stat-row d-flex justify-content-between align-items-center">
+                        <div class="stat-value">{{ statistic.home_corners }}</div>
+                        <div class="stat-label">Corners</div>
+                        <div class="stat-value">{{ statistic.away_corners }}</div>
+                    </div>
+
+                    <div class="stat-row d-flex justify-content-between align-items-center">
+                        <div class="stat-value">{{ statistic.home_possession }}%</div>
+                        <div class="stat-label">Possession</div>
+                        <div class="stat-value">{{ statistic.away_possession }}%</div>
+                    </div>
+
+                    <div class="stat-row">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="stat-label">Possession Bar</span>
+                        </div>
+                        <div class="stat-bar">
+                            <div class="stat-bar-fill" style="width: {{ statistic.home_possession }}%;"></div>
+                        </div>
+                    </div>
+                </div>
             {% else %}
-                <p class="text-muted">Lineup not available</p>
+                <div class="text-center text-muted">
+                    <p>No statistics available yet.</p>
+                </div>
             {% endif %}
         </div>
 
-        <div class="col-md-6">
-            <h3 class="mb-3">{{ match.away_team.name }} Lineup</h3>
-            {% if away_lineup %}
-                <p class="text-muted mb-3">Formation: {{ away_lineup.formation }}</p>
-                {% for player in away_lineup.lineupplayer_set.all %}
-                    <div class="lineup-player d-flex justify-content-between align-items-center">
-                        <span>{{ player.player.full_name }}</span>
-                        <span class="position-badge">{{ player.position }}</span>
+        <!-- Lineups Tab -->
+        <div id="lineups" class="tab-content">
+            <div class="row">
+                <div class="col-md-6">
+                    <h3 class="mb-3">{{ match.home_team.name }} Lineup</h3>
+                    {% if home_lineup %}
+                        <p class="text-muted mb-3">Formation: {{ home_lineup.formation }}</p>
+                        {% for player in home_lineup.lineupplayer_set.all %}
+                            <div class="lineup-player d-flex justify-content-between align-items-center">
+                                <span>{{ player.player.full_name }}</span>
+                                <span class="position-badge">{{ player.position }}</span>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">Lineup not available</p>
+                    {% endif %}
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="mb-3">{{ match.away_team.name }} Lineup</h3>
+                    {% if away_lineup %}
+                        <p class="text-muted mb-3">Formation: {{ away_lineup.formation }}</p>
+                        {% for player in away_lineup.lineupplayer_set.all %}
+                            <div class="lineup-player d-flex justify-content-between align-items-center">
+                                <span>{{ player.player.full_name }}</span>
+                                <span class="position-badge">{{ player.position }}</span>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">Lineup not available</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Events Tab -->
+        <div id="events" class="tab-content">
+            <h3 class="mb-4 text-center">⚽ Match Events</h3>
+            {% for event in match.matchevent_set.all %}
+                <div class="event-item">
+                    <div class="event-minute">{{ event.minute }}'</div>
+                    <div class="event-icon">
+                        {% if event.event_type == 'GOAL' %}⚽
+                        {% elif event.event_type == 'YELLOW' %}🟨
+                        {% elif event.event_type == 'RED' %}🟥
+                        {% elif event.event_type == 'SUB' %}🔄
+                        {% endif %}
                     </div>
-                {% endfor %}
-            {% else %}
-                <p class="text-muted">Lineup not available</p>
-            {% endif %}
+                    <div>
+                        <div class="event-player">{{ event.player.full_name }}</div>
+                        <div class="event-type">{{ event.get_event_type_display }}</div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="text-center text-muted">
+                    <p>No events available yet.</p>
+                </div>
+            {% endfor %}
         </div>
     </div>
-
-    <hr style="border-color: rgba(255, 255, 255, 0.1);">
-
-    <!-- Statistics -->
-    <h3 class="mb-4 text-center">📊 Match Statistics</h3>
-
-    {% if statistic %}
-        <div class="glass-card" style="background: rgba(255, 255, 255, 0.03);">
-            <div class="stat-row d-flex justify-content-between align-items-center">
-                <div class="stat-value">{{ statistic.home_shots }}</div>
-                <div class="stat-label">Shots</div>
-                <div class="stat-value">{{ statistic.away_shots }}</div>
-            </div>
-
-            <div class="stat-row d-flex justify-content-between align-items-center">
-                <div class="stat-value">{{ statistic.home_shots_on_target }}</div>
-                <div class="stat-label">Shots on Target</div>
-                <div class="stat-value">{{ statistic.away_shots_on_target }}</div>
-            </div>
-
-            <div class="stat-row d-flex justify-content-between align-items-center">
-                <div class="stat-value">{{ statistic.home_corners }}</div>
-                <div class="stat-label">Corners</div>
-                <div class="stat-value">{{ statistic.away_corners }}</div>
-            </div>
-
-            <div class="stat-row d-flex justify-content-between align-items-center">
-                <div class="stat-value">{{ statistic.home_possession }}%</div>
-                <div class="stat-label">Possession</div>
-                <div class="stat-value">{{ statistic.away_possession }}%</div>
-            </div>
-
-            <div class="stat-row">
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="stat-label">Possession Bar</span>
-                </div>
-                <div class="stat-bar">
-                    <div class="stat-bar-fill" style="width: {{ statistic.home_possession }}%;"></div>
-                </div>
-            </div>
-        </div>
-    {% else %}
-        <div class="text-center text-muted">
-            <p>No statistics available yet.</p>
-        </div>
-    {% endif %}
 </div>
+
+<script>
+function showTab(tabId) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+
+    // Remove active class from all tab buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    // Show selected tab content
+    document.getElementById(tabId).classList.add('active');
+
+    // Add active class to clicked button
+    event.target.classList.add('active');
+}
+</script>
 {% endblock %}
