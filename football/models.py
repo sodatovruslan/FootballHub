@@ -133,6 +133,7 @@ class LineupPlayer(models.Model):
 class MatchEvent(models.Model):
     EVENT_TYPES = [
         ('GOAL', 'Goal'),
+        ('ASSIST', 'Assist'),
         ('YELLOW', 'Yellow Card'),
         ('RED', 'Red Card'),
         ('SUB', 'Substitution'),
