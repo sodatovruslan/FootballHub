@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
@@ -7,13 +6,14 @@ from django.conf import settings
 from random import randint
 from django.contrib.auth.decorators import login_required
 
-from .models import EmailConfirm,Profile
+from .models import EmailConfirm, Profile
 from .forms import (
     RegisterForm,
     LoginForm,
     ConfirmEmailForm,
     ForgotPasswordForm,
     ResetConfirmForm,
+    ProfileForm,
 )
 
 
@@ -237,9 +237,6 @@ def confirm_email(request):
 @login_required
 def profile(request):
     return render(request,'accounts/profile.html',{'profile': request.user.profile})
-
-from .forms import ProfileForm
-
 
 @login_required
 def profile_update(request):
