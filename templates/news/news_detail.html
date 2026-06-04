@@ -146,7 +146,7 @@
                     <div class="comment-date">{{ comment.created_at|date:"F j, Y, H:i" }}</div>
                 </div>
                 <div class="d-flex gap-2">
-                    <a href="{% url 'like_comment' comment.id %}" class="like-btn {% if user.is_authenticated and comment.likes.filter(user=user).exists %}liked{% endif %}">
+                    <a href="{% url 'like_comment' comment.id %}" class="like-btn">
                         👍 {{ comment.likes.count }}
                     </a>
                     <button class="reply-btn" onclick="showReplyForm({{ comment.id }})">↳ Reply</button>
@@ -175,7 +175,7 @@
                             <div class="comment-author">{{ reply.user.username }}</div>
                             <div class="comment-date">{{ reply.created_at|date:"F j, Y, H:i" }}</div>
                         </div>
-                        <a href="{% url 'like_comment' reply.id %}" class="like-btn {% if user.is_authenticated and reply.likes.filter(user=user).exists %}liked{% endif %}">
+                        <a href="{% url 'like_comment' reply.id %}" class="like-btn">
                             👍 {{ reply.likes.count }}
                         </a>
                     </div>

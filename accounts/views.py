@@ -5,7 +5,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from random import randint
 from django.contrib.auth.decorators import login_required
-
+from django.urls import reverse
 from .models import EmailConfirm, Profile
 from .forms import (
     RegisterForm,
@@ -42,20 +42,8 @@ def register(request):
         email = form.cleaned_data['email']
         password = form.cleaned_data['password1']
 
-        # Проверяем существует ли активный пользователь
-        existing_user = User.objects.filter(username=username, is_active=True).first()
-        if existing_user:
-            return render(
-                request,
-                'accounts/register.html',
-                {'form': form, 'error': 'Username already exists'}
-            )
-
-        # Удаляем неактивных пользователей с тем же username
-        User.objects.filter(
-            username=username,
-            is_active=False
-        ).delete()
+        User.objects.filter(username=username, is_active=False).delete()
+        User.objects.filter(email=email, is_active=False).delete()
 
         try:
             user = User.objects.create_user(
@@ -63,35 +51,23 @@ def register(request):
                 email=email,
                 password=password
             )
-
             user.is_active = False
             user.save()
 
-            Profile.objects.get_or_create(
-                user=user
-            )
-
+            Profile.objects.get_or_create(user=user)
             send_confirmation_email(user)
 
-            return render(
-                request,
-                'accounts/confirm_email.html',
-                {
-                    'username': user.username
-                }
-            )
-        except Exception as e:
-            return render(
-                request,
-                'accounts/register.html',
-                {'form': form, 'error': f'Error creating user: {str(e)}'}
-            )
+            # ✅ redirect внутри POST блока, user существует
+            return redirect(f"{reverse('confirm_email')}?username={user.username}")
 
-    return render(
-        request,
-        'accounts/register.html',
-        {'form': form}
-    )
+        except Exception as e:
+            return render(request, 'accounts/register.html', {
+                'form': form,
+                'error': f'Error creating user: {str(e)}'
+            })
+
+    # ✅ GET запрос — просто показываем форму
+    return render(request, 'accounts/register.html', {'form': form})
 
 
 def login_view(request):
@@ -195,42 +171,40 @@ def confirm_email(request):
     form = ConfirmEmailForm(request.POST or None)
 
     if request.method == 'POST' and form.is_valid():
-        username = request.POST.get('username')
+        username = request.POST.get('username')  # ✅ достаём username
         code = form.cleaned_data['code']
 
-        user = User.objects.filter(
-            username=username
-        ).first()
+        user = User.objects.filter(username=username).first()
 
         if not user:
-            return render(
-                request,
-                'accounts/confirm_email.html',
-                {
-                    'form': form,
-                    'error': 'User not found'
-                }
-            )
+            return render(request, 'accounts/confirm_email.html', {
+                'form': form,
+                'error': 'User not found',
+                'username': username  # ✅ возвращаем обратно
+            })
 
-        confirm = EmailConfirm.objects.filter(
-            user=user,
-            code=code
-        ).first()
+        confirm = EmailConfirm.objects.filter(user=user, code=code).first()
 
         if not confirm:
-            return render(request,'accounts/confirm_email.html',{'form': form,'error': 'Invalid code'})
+            return render(request, 'accounts/confirm_email.html', {
+                'form': form,
+                'error': 'Invalid code',
+                'username': username  # ✅ возвращаем обратно
+            })
 
         user.is_active = True
         user.save()
         confirm.delete()
 
-        # Автоматически логиним пользователя после подтверждения email
-        from django.contrib.auth import login
         login(request, user)
+        return redirect('team_list')
 
-        return redirect('home')
-
-    return render(request,'accounts/confirm_email.html',{'form': form})
+  
+    username = request.GET.get('username', '')
+    return render(request, 'accounts/confirm_email.html', {
+        'form': form,
+        'username': username
+    })
 
 
 

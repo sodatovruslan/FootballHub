@@ -17,12 +17,14 @@
     <p>{{ player.full_name }} - {{ player.position }}</p>
 {% endfor %}
 
-<a href="{% url 'team_update' team.pk %}" class="btn btn-warning">
-    Update
-</a>
+{% if user.is_authenticated %}
+    <a href="{% url 'team_update' team.pk %}" class="btn btn-warning">
+        Update
+    </a>
 
-<a href="{% url 'team_delete' team.pk %}" class="btn btn-danger">
-    Delete
-</a>
+    <a href="{% url 'team_delete' team.pk %}" class="btn btn-danger">
+        Delete
+    </a>
+{% endif %}
 
 {% endblock content %}
