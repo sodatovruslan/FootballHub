@@ -157,5 +157,19 @@ class MatchEvent(models.Model):
 
     def __str__(self):
         return f"{self.minute}' {self.player.full_name}"
+
+
+class PlayerMatchRating(models.Model):
+    match = models.ForeignKey(Match, on_delete=models.CASCADE, related_name='player_ratings')
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='match_ratings')
+    rating = models.DecimalField(max_digits=3, decimal_places=1, help_text="Player rating from 0.0 to 10.0")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('match', 'player')
+
+    def __str__(self):
+        return f"{self.player.full_name} - {self.rating}"
 # Create your models here.
 
