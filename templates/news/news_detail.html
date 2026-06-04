@@ -1,43 +1,135 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<h1>{{ news.title }}</h1>
-{% if news.image %}
-    <img src="{{ news.image.url }}" width="400">
-{% endif %}
-<p>{{ news.content }}</p>
-<p>
-    <small>
-        By {{ news.author }} | {{ news.created_at }}
-    </small>
-</p>
-<hr>
+<style>
+    .news-image {
+        width: 100%;
+        max-height: 400px;
+        object-fit: cover;
+        border-radius: 20px;
+        margin-bottom: 30px;
+        border: 3px solid rgba(0, 212, 255, 0.3);
+    }
 
-<h3>Comments</h3>
+    .news-meta {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
+    }
 
-{% for comment in comments %}
-    <div style="border:1px solid #ddd; padding:10px; margin-bottom:10px;">
-        <b>{{ comment.user.username }}</b>
-        <p>{{ comment.text }}</p>
-        <small>{{ comment.created_at }}</small>
+    .comment-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .comment-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateX(5px);
+    }
+
+    .comment-author {
+        font-weight: 600;
+        color: #00d4ff;
+        margin-bottom: 5px;
+    }
+
+    .comment-date {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.85rem;
+    }
+
+    .comment-text {
+        color: rgba(255, 255, 255, 0.9);
+        margin-top: 10px;
+        line-height: 1.6;
+    }
+
+    .comment-form textarea {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        padding: 15px;
+        color: #fff;
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .comment-form textarea:focus {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(0, 212, 255, 0.5);
+        color: #fff;
+        outline: none;
+    }
+
+    .comment-form textarea::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+</style>
+
+<div class="glass-card">
+    <h1 class="mb-4">{{ news.title }}</h1>
+
+    {% if news.image %}
+        <img src="{{ news.image.url }}" alt="{{ news.title }}" class="news-image">
+    {% endif %}
+
+    <div class="news-meta mb-3">
+        <small>By {{ news.author.username }} | {{ news.created_at|date:"F j, Y, H:i" }}</small>
     </div>
-{% empty %}
-    <p>No comments yet</p>
-{% endfor %}
 
-<hr>
+    <div class="mb-5" style="color: rgba(255, 255, 255, 0.9); line-height: 1.8; font-size: 1.1rem;">
+        {{ news.content|linebreaks }}
+    </div>
 
-{% if user.is_authenticated %}
+    <hr style="border-color: rgba(255, 255, 255, 0.1);">
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Add comment</button>
-</form>
+    <h3 class="mb-4">💬 Comments ({{ comments|length }})</h3>
 
-{% else %}
+    {% for comment in comments %}
+        <div class="comment-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="comment-author">{{ comment.user.username }}</div>
+                    <div class="comment-date">{{ comment.created_at|date:"F j, Y, H:i" }}</div>
+                </div>
+            </div>
+            <div class="comment-text">{{ comment.text }}</div>
+        </div>
+    {% empty %}
+        <div class="text-center text-muted py-4">
+            <p>No comments yet. Be the first to comment!</p>
+        </div>
+    {% endfor %}
 
-<p>You must login to comment</p>
+    <hr style="border-color: rgba(255, 255, 255, 0.1);">
 
-{% endif %}
-<a href="{% url 'news_list' %}">⬅ Back</a>
+    {% if user.is_authenticated %}
+        <h3 class="mb-4">✍️ Add a Comment</h3>
+        <form method="post" class="comment-form">
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ form.text }}
+            </div>
+            <button type="submit" class="btn btn-primary-gradient">
+                Post Comment
+            </button>
+        </form>
+    {% else %}
+        <div class="text-center py-4">
+            <p class="text-muted mb-3">🔒 Войдите в аккаунт, чтобы оставить комментарий</p>
+            <a href="{% url 'login' %}" class="btn btn-primary-gradient me-2">Login</a>
+            <a href="{% url 'register' %}" class="btn btn-glass">Register</a>
+        </div>
+    {% endif %}
+
+    <div class="mt-4">
+        <a href="{% url 'news_list' %}" class="btn btn-glass">
+            ← Back to News
+        </a>
+    </div>
+</div>
 {% endblock %}
