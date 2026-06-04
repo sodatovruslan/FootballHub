@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .event-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .event-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .event-card:hover::before {
+        left: 100%;
+    }
+
+    .event-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 212, 255, 0.3);
+        border-color: rgba(0, 212, 255, 0.5);
+    }
+
+    .event-type-badge {
+        padding: 8px 20px;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+    }
+
+    .event-goal {
+        background: linear-gradient(135deg, #00ff88, #00d4ff);
+    }
+
+    .event-yellow {
+        background: linear-gradient(135deg, #ffd700, #ffaa00);
+    }
+
+    .event-red {
+        background: linear-gradient(135deg, #ff416c, #ff4b2b);
+    }
+
+    .event-sub {
+        background: linear-gradient(135deg, #7b2cbf, #00d4ff);
+    }
+
+    .minute-badge {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        font-weight: 700;
+        box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+    }
+
+    .player-name {
+        font-size: 1.3rem;
+        font-weight: 600;
+        background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .match-info {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.95rem;
+    }
+
+    @media (max-width: 768px) {
+        .event-card {
+            padding: 20px;
+        }
+
+        .minute-badge {
+            width: 50px;
+            height: 50px;
+            font-size: 1rem;
+        }
+
+        .player-name {
+            font-size: 1.1rem;
+        }
+    }
+</style>
+
+<div class="glass-card">
+    <h1 class="text-center mb-5">⚽ Match Events</h1>
+
+    <div class="row">
+        {% for event in match_events %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="event-card">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="minute-badge">{{ event.minute }}'</div>
+                            <div>
+                                <div class="player-name">{{ event.player.full_name }}</div>
+                                <div class="match-info">{{ event.match.home_team.name }} vs {{ event.match.away_team.name }}</div>
+                            </div>
+                        </div>
+                        <div class="event-type-badge {% if event.event_type == 'GOAL' %}event-goal{% elif event.event_type == 'YELLOW' %}event-yellow{% elif event.event_type == 'RED' %}event-red{% else %}event-sub{% endif %}">
+                            {{ event.get_event_type_display }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="text-center text-muted py-5">
+                    <p>No match events available yet.</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

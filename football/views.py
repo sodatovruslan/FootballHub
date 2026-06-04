@@ -258,3 +258,10 @@ class MatchDeleteView(PermissionRequiredMixin, generic.DeleteView):
     model = Match
     template_name = 'football/match_delete.html'
     success_url = reverse_lazy('match_list')
+
+
+# MatchEvent Views
+class MatchEventListView(generic.ListView):
+    model = MatchEvent
+    template_name = 'football/match_event_list.html'
+    context_object_name = 'match_events'

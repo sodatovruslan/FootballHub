@@ -25,4 +25,5 @@ urlpatterns = [
     path('match/create/', views.MatchCreateView.as_view(), name='match_create'),
     path('match/update/<int:pk>/', views.MatchUpdateView.as_view(), name='match_update'),
     path('match/delete/<int:pk>/', views.MatchDeleteView.as_view(), name='match_delete'),
+    path('match-events/', views.MatchEventListView.as_view(), name='match_event_list'),
 ]
