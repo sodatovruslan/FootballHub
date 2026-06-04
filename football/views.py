@@ -37,9 +37,18 @@ def player_detail(request, pk):
         event_type='GOAL'
     ).count()
 
+    # Get player events grouped by type
+    from django.db.models import Count
+    events = MatchEvent.objects.filter(
+        player=player
+    ).values('event_type').annotate(
+        count=Count('id')
+    )
+
     context = {
         'player': player,
         'goals': goals,
+        'events': events,
     }
     return render(request, 'football/player_detail.html', context)
 

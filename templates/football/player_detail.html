@@ -160,6 +160,23 @@
                 <span class="info-label">Goals</span>
                 <span class="info-value">{{ goals }}</span>
             </div>
+
+            {% if events %}
+                <div class="info-row">
+                    <span class="info-label">Match Events</span>
+                    <span class="info-value">
+                        {% for event in events %}
+                            {% if event.event_type == 'GOAL' %}⚽ {{ event.count }}
+                            {% elif event.event_type == 'ASSIST' %}🅰️ {{ event.count }}
+                            {% elif event.event_type == 'YELLOW' %}🟨 {{ event.count }}
+                            {% elif event.event_type == 'RED' %}🟥 {{ event.count }}
+                            {% elif event.event_type == 'SUB' %}🔄 {{ event.count }}
+                            {% endif %}
+                            {% if not forloop.last %} | {% endif %}
+                        {% endfor %}
+                    </span>
+                </div>
+            {% endif %}
         </div>
 
         <div class="col-md-6">
