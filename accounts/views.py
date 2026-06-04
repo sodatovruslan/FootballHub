@@ -73,15 +73,11 @@ def register(request):
 
             send_confirmation_email(user)
 
-    
-            confirm = EmailConfirm.objects.filter(user=user).first()
-
             return render(
                 request,
                 'accounts/confirm_email.html',
                 {
-                    'username': user.username,
-                    'confirmation_code': confirm.code if confirm else None
+                    'username': user.username
                 }
             )
         except Exception as e:

@@ -11,27 +11,22 @@
         text-align: center;
     }
 
-    .code-number {
-        font-size: 2.5rem;
-        font-weight: 700;
-        letter-spacing: 10px;
-        background: linear-gradient(90deg, #00d4ff, #7b2cbf);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+    .info-text {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1.1rem;
+        line-height: 1.6;
     }
 </style>
 
 <div class="glass-card">
     <h1 class="text-center mb-4">Confirm Email</h1>
 
-    {% if confirmation_code %}
-        <div class="code-display">
-            <p class="mb-2">Your confirmation code:</p>
-            <div class="code-number">{{ confirmation_code }}</div>
-            <p class="text-muted mt-2">Copy this code and enter it below</p>
-        </div>
-    {% endif %}
+    <div class="code-display">
+        <p class="info-text">
+            📧 A confirmation code has been sent to your email address.<br>
+            Please check your inbox and enter the 6-digit code below.
+        </p>
+    </div>
 
     {% if error %}
         <div class="alert alert-danger">

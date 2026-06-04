@@ -1,8 +1,6 @@
-from django.shortcuts import render, get_object_or_404,redirect
-from .models import News
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import News, Comment
 from .forms import CommentForm
-from django.shortcuts import redirect
 
 def news_list(request):
     news = News.objects.all().order_by('-created_at')
