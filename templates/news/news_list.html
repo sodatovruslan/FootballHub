@@ -1,33 +1,139 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+    .news-header {
+        background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 40px;
+        text-align: center;
+    }
 
-<h1>⚽ Football News</h1>
+    .news-card {
+        background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(123, 44, 191, 0.1));
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(0, 212, 255, 0.3);
+        border-radius: 25px;
+        padding: 30px;
+        margin-bottom: 30px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .news-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+        transform: rotate(45deg);
+        transition: all 0.5s ease;
+    }
+
+    .news-card:hover::before {
+        left: 50%;
+    }
+
+    .news-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 25px 50px rgba(0, 212, 255, 0.4);
+        border-color: rgba(0, 212, 255, 0.6);
+    }
+
+    .news-image {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .news-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 15px;
+    }
+
+    .news-content {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1rem;
+        line-height: 1.8;
+        margin-bottom: 20px;
+    }
+
+    .news-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+    }
+
+    .news-author {
+        font-weight: 600;
+        color: #00d4ff;
+    }
+
+    .btn-read-more {
+        background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+        border: none;
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-weight: 600;
+        color: #fff;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-read-more:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(123, 44, 191, 0.4);
+    }
+
+    .no-news {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 1.5rem;
+        padding: 50px;
+    }
+</style>
+
+<h1 class="news-header">📰 Football News</h1>
 
 {% for item in news %}
-
-
-<div style="border:1px solid #ccc; margin:10px; padding:10px;">
-{% if item.image %}
-    <img src="{{ item.image.url }}"
-         style="width:300px; height:auto;">
-{% endif %}
-    <h2>{{ item.title }}</h2>
-
-    <p>{{ item.content|truncatechars:200 }}</p>
-
-    <small>
-        By {{ item.author }} | {{ item.created_at }}
-    </small>
-<a href="{% url 'news_detail' item.pk %}">
-    Read more
-</a>
+<div class="news-card">
+    {% if item.image %}
+        <img src="{{ item.image.url }}" alt="{{ item.title }}" class="news-image">
+    {% endif %}
+    <h2 class="news-title">{{ item.title }}</h2>
+    <div class="news-meta">
+        <span class="news-author">👤 {{ item.author.username }}</span>
+        <span>📅 {{ item.created_at|date:"F d, Y" }}</span>
+    </div>
+    <p class="news-content">{{ item.content|truncatechars:300 }}</p>
+    <a href="{% url 'news_detail' item.pk %}" class="btn-read-more">
+        Read More →
+    </a>
 </div>
 
 {% empty %}
-
-<p>No news yet</p>
-
+<div class="no-news">
+    <p>📭 No news yet</p>
+</div>
 {% endfor %}
 
 {% endblock %}

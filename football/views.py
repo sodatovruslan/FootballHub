@@ -56,56 +56,22 @@ def player_detail(request, pk):
 
 
 def standings(request):
-    teams = Team.objects.all()
+    standings_data = Standing.objects.select_related('team', 'tournament').all()
     table = []
 
-    for team in teams:
-        matches = Match.objects.filter(
-            Q(home_team=team) | Q(away_team=team)
-        )
-
-        played = matches.count()
-        wins = 0
-        draws = 0
-        losses = 0
-        goals_for = 0
-        goals_against = 0
-
-        for match in matches:
-            if match.home_team == team:
-                goals_for += match.home_score
-                goals_against += match.away_score
-
-                if match.home_score > match.away_score:
-                    wins += 1
-                elif match.home_score == match.away_score:
-                    draws += 1
-                else:
-                    losses += 1
-            else:
-                goals_for += match.away_score
-                goals_against += match.home_score
-
-                if match.away_score > match.home_score:
-                    wins += 1
-                elif match.away_score == match.home_score:
-                    draws += 1
-                else:
-                    losses += 1
-
-        points = wins * 3 + draws
-        goal_difference = goals_for - goals_against
-
+    for standing in standings_data:
+        goal_difference = standing.goals_for - standing.goals_against
         table.append({
-            'team': team,
-            'played': played,
-            'wins': wins,
-            'draws': draws,
-            'losses': losses,
-            'goals_for': goals_for,
-            'goals_against': goals_against,
+            'team': standing.team,
+            'played': standing.played,
+            'wins': standing.wins,
+            'draws': standing.draws,
+            'losses': standing.losses,
+            'goals_for': standing.goals_for,
+            'goals_against': standing.goals_against,
             'goal_difference': goal_difference,
-            'points': points
+            'points': standing.points,
+            'tournament': standing.tournament
         })
 
     table = sorted(table, key=lambda x: x['points'], reverse=True)
