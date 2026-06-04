@@ -29,4 +29,16 @@ class Comment(models.Model):
     def is_reply(self):
         return self.parent_comment is not None
 
+
+class CommentLike(models.Model):
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='likes')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('comment', 'user')
+
+    def __str__(self):
+        return f"{self.user.username} likes comment"
+
 # Create your models here.
