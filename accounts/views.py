@@ -6,6 +6,7 @@ from django.conf import settings
 from random import randint
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
+from django.http import JsonResponse
 from .models import EmailConfirm, Profile
 from .forms import (
     RegisterForm,
@@ -15,6 +16,7 @@ from .forms import (
     ResetConfirmForm,
     ProfileForm,
 )
+from football.models import Team
 
 
 def send_confirmation_email(user):
@@ -234,4 +236,34 @@ def profile_update(request):
             'form': form
         }
     )
+
+
+@login_required
+def add_favorite_team(request, team_id):
+    if request.method == 'POST':
+        try:
+            team = Team.objects.get(pk=team_id)
+            profile = request.user.profile
+            profile.favorite_team = team
+            profile.save()
+            return JsonResponse({'success': True, 'message': f'{team.name} added to favorites!'})
+        except Team.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Team not found'})
+    return JsonResponse({'success': False, 'message': 'Invalid request'})
+
+
+@login_required
+def remove_favorite_team(request):
+    if request.method == 'POST':
+        try:
+            profile = request.user.profile
+            team_name = profile.favorite_team.name if profile.favorite_team else 'Team'
+            profile.favorite_team = None
+            profile.save()
+            return JsonResponse({'success': True, 'message': f'{team_name} removed from favorites!'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+    return JsonResponse({'success': False, 'message': 'Invalid request'})
+
+
 # Create your views here.

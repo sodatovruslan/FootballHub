@@ -1,6 +1,143 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+    .favorite-btn {
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1));
+        border: 2px solid rgba(255, 215, 0, 0.4);
+        padding: 10px 25px;
+        border-radius: 25px;
+        font-weight: 600;
+        color: #ffd700;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        margin-bottom: 20px;
+    }
+
+    .favorite-btn:hover {
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.4), rgba(255, 165, 0, 0.2));
+        border-color: #ffd700;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+    }
+
+    .favorite-btn.active {
+        background: linear-gradient(135deg, #ffd700, #ffaa00);
+        color: #000;
+        border-color: #ffd700;
+    }
+
+    .fifa-card {
+        background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(123, 44, 191, 0.15));
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(0, 212, 255, 0.3);
+        border-radius: 20px;
+        padding: 25px;
+        text-align: center;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .fifa-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 212, 255, 0.4);
+        border-color: rgba(0, 212, 255, 0.6);
+    }
+
+    .fifa-rating {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(123, 44, 191, 0.3));
+        border: 2px solid rgba(0, 212, 255, 0.5);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 1.2rem;
+        color: #00d4ff;
+        z-index: 10;
+    }
+
+    .fifa-photo {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin: 20px auto;
+        border: 3px solid rgba(0, 212, 255, 0.3);
+        box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
+    }
+
+    .fifa-number {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: linear-gradient(135deg, rgba(123, 44, 191, 0.3), rgba(0, 212, 255, 0.3));
+        border: 2px solid rgba(123, 44, 191, 0.5);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1rem;
+        color: #fff;
+        z-index: 10;
+    }
+
+    .fifa-name {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 10px;
+    }
+
+    .fifa-position {
+        background: linear-gradient(135deg, rgba(123, 44, 191, 0.3), rgba(0, 212, 255, 0.3));
+        border: 1px solid rgba(123, 44, 191, 0.5);
+        border-radius: 20px;
+        padding: 3px 15px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #fff;
+        display: inline-block;
+    }
+
+    .fifa-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        margin-top: 15px;
+    }
+
+    .fifa-stat {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 5px 10px;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .stat-value {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #00d4ff;
+    }
+</style>
+
 {% if team.logo %}
     <img src="{{ team.logo.url }}" width="150">
 {% else %}
@@ -11,11 +148,61 @@
 <p>👥 Capacity: {{ team.capacity }}</p>
 <p>City: {{ team.city }}</p>
 
-<h3>Players:</h3>
+{% if user.is_authenticated %}
+    {% csrf_token %}
+    {% if user.profile.favorite_team == team %}
+        <button class="favorite-btn active" onclick="removeFavorite()">
+            ⭐ Remove from Favorites
+        </button>
+    {% else %}
+        <button class="favorite-btn" onclick="addFavorite()">
+            ⭐ Add to Favorites
+        </button>
+    {% endif %}
+{% endif %}
 
-{% for player in team.players.all %}
-    <p>{{ player.full_name }} - {{ player.position }}</p>
-{% endfor %}
+<h3 class="mt-4 mb-4">Players</h3>
+
+<div class="row">
+    {% for player in team.players.all %}
+        <div class="col-md-4 col-sm-6 mb-3">
+            <div class="fifa-card">
+                <div class="fifa-rating">{{ player.overall }}</div>
+                <img src="{{ player.get_photo_url }}" alt="{{ player.full_name }}" class="fifa-photo">
+                <div class="fifa-number">{{ player.number }}</div>
+                <div class="fifa-name">{{ player.full_name }}</div>
+                <div class="fifa-position">{{ player.get_position_display }}</div>
+
+                <div class="fifa-stats mt-3">
+                    <div class="fifa-stat">
+                        <span class="stat-label">PAC</span>
+                        <span class="stat-value">{{ player.pace }}</span>
+                    </div>
+                    <div class="fifa-stat">
+                        <span class="stat-label">SHO</span>
+                        <span class="stat-value">{{ player.shooting }}</span>
+                    </div>
+                    <div class="fifa-stat">
+                        <span class="stat-label">PAS</span>
+                        <span class="stat-value">{{ player.passing }}</span>
+                    </div>
+                    <div class="fifa-stat">
+                        <span class="stat-label">DRI</span>
+                        <span class="stat-value">{{ player.dribbling }}</span>
+                    </div>
+                    <div class="fifa-stat">
+                        <span class="stat-label">DEF</span>
+                        <span class="stat-value">{{ player.defending }}</span>
+                    </div>
+                    <div class="fifa-stat">
+                        <span class="stat-label">PHY</span>
+                        <span class="stat-value">{{ player.physical }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
 
 {% if perms.football.change_team or perms.football.delete_team %}
     <a href="{% url 'team_update' team.pk %}" class="btn btn-warning">
@@ -26,5 +213,72 @@
         Delete
     </a>
 {% endif %}
+
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function addFavorite() {
+    const csrftoken = getCookie('csrftoken');
+    fetch('{% url "add_favorite_team" team.pk %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrftoken,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            location.reload();
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error adding to favorites');
+    });
+}
+
+function removeFavorite() {
+    const csrftoken = getCookie('csrftoken');
+    fetch('{% url "remove_favorite_team" %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrftoken,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            location.reload();
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error removing from favorites');
+    });
+}
+</script>
 
 {% endblock content %}

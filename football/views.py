@@ -25,11 +25,13 @@ def team_detail(request, pk):
 
 
 
+@login_required
 def player_list(request):
     players = Player.objects.select_related('team')
     return render(request, 'football/player_list.html', {'players': players})
 
 
+@login_required
 def player_detail(request, pk):
     player = get_object_or_404(Player, pk=pk)
     goals = MatchEvent.objects.filter(
@@ -55,6 +57,7 @@ def player_detail(request, pk):
 
 
 
+@login_required
 def standings(request):
     standings_data = Standing.objects.select_related('team', 'tournament').all()
     table = []

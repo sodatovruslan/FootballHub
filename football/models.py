@@ -128,6 +128,18 @@ class LineupPlayer(models.Model):
     x_position = models.PositiveIntegerField(default=50, help_text="X position on field (0-100)")
     y_position = models.PositiveIntegerField(default=50, help_text="Y position on field (0-100)")
 
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.player.team != self.lineup.team:
+            raise ValidationError(
+                f"Player {self.player.full_name} belongs to {self.player.team.name}, "
+                f"but this lineup is for {self.lineup.team.name}"
+            )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.player.full_name
     

@@ -49,4 +49,16 @@ urlpatterns = [
         views.profile_update,
         name='profile_update'
     ),
+
+    path(
+        'favorite-team/add/<int:team_id>/',
+        views.add_favorite_team,
+        name='add_favorite_team'
+    ),
+
+    path(
+        'favorite-team/remove/',
+        views.remove_favorite_team,
+        name='remove_favorite_team'
+    ),
 ]
