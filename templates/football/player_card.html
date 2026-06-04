@@ -1,0 +1,155 @@
+{% load static %}
+
+<style>
+    .fifa-card {
+        background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(123, 44, 191, 0.1));
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(0, 212, 255, 0.3);
+        border-radius: 20px;
+        padding: 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .fifa-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transform: rotate(45deg);
+        transition: all 0.5s ease;
+    }
+
+    .fifa-card:hover::before {
+        left: 50%;
+    }
+
+    .fifa-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 212, 255, 0.4);
+        border-color: rgba(0, 212, 255, 0.6);
+    }
+
+    .fifa-photo {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid rgba(0, 212, 255, 0.5);
+        margin: 0 auto 15px;
+        box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        position: relative;
+        z-index: 1;
+    }
+
+    .fifa-rating {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+        color: #fff;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        font-weight: 700;
+        box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        z-index: 2;
+    }
+
+    .fifa-number {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 15px;
+        padding: 5px 15px;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #00d4ff;
+        margin-bottom: 10px;
+        display: inline-block;
+    }
+
+    .fifa-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 5px;
+    }
+
+    .fifa-position {
+        background: linear-gradient(135deg, rgba(123, 44, 191, 0.3), rgba(0, 212, 255, 0.3));
+        border: 1px solid rgba(123, 44, 191, 0.5);
+        border-radius: 20px;
+        padding: 5px 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 15px;
+        display: inline-block;
+    }
+
+    .fifa-events {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 15px;
+    }
+
+    .fifa-event {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        padding: 5px 12px;
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .fifa-event:hover {
+        background: rgba(0, 212, 255, 0.2);
+        border-color: rgba(0, 212, 255, 0.5);
+        color: #00d4ff;
+    }
+</style>
+
+<div class="fifa-card">
+    <div class="fifa-rating">{{ player.overall }}</div>
+
+    <img src="{{ player.get_photo_url }}" alt="{{ player.full_name }}" class="fifa-photo">
+
+    <div class="fifa-number">{{ player.number }}</div>
+
+    <div class="fifa-name">{{ player.full_name }}</div>
+
+    <div class="fifa-position">{{ player.get_position_display }}</div>
+
+    {% if events %}
+        <div class="fifa-events">
+            {% for event in events %}
+                <div class="fifa-event">
+                    {% if event.event_type == 'GOAL' %}⚽
+                    {% elif event.event_type == 'ASSIST' %}🅰️
+                    {% elif event.event_type == 'YELLOW' %}🟨
+                    {% elif event.event_type == 'RED' %}🟥
+                    {% elif event.event_type == 'SUB' %}🔄
+                    {% endif %}
+                    x{{ event.count }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
