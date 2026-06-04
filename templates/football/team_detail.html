@@ -17,7 +17,7 @@
     <p>{{ player.full_name }} - {{ player.position }}</p>
 {% endfor %}
 
-{% if user.is_authenticated %}
+{% if perms.football.change_team or perms.football.delete_team %}
     <a href="{% url 'team_update' team.pk %}" class="btn btn-warning">
         Update
     </a>

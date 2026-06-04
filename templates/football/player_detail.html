@@ -246,7 +246,7 @@
     <hr style="border-color: rgba(255, 255, 255, 0.1);">
 
     <div class="text-center mb-4">
-        {% if user.is_authenticated %}
+        {% if perms.football.change_player or perms.football.delete_player %}
             <a href="{% url 'player_update' player.pk %}" class="btn btn-primary-gradient me-2">
                 ✏️ Update
             </a>

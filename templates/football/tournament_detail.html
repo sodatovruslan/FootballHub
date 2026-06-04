@@ -6,7 +6,7 @@
 
 <p>Season: {{ tournament.season }}</p>
 
-{% if user.is_authenticated %}
+{% if perms.football.change_tournament or perms.football.delete_tournament %}
     <a href="{% url 'tournament_update' tournament.pk %}"
        class="btn btn-warning">
         Update
